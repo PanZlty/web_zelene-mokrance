@@ -74,13 +74,19 @@ add_action( 'wp_enqueue_scripts', function () {
 .zm-home__steps>div:not(:last-child):after{content:"";display:block!important;position:absolute;top:31px;left:calc(50% + 38px);right:calc(-50% + 38px);height:2px;background:linear-gradient(90deg,var(--accent),#dce5d1);z-index:0}
 .zm-home__steps>div:last-child:after,.zm-home__steps>div>div:after{display:none!important;content:none!important}
 .zm-home__steps b{position:relative;z-index:1;width:64px;height:64px;margin-inline:auto;border:5px solid #eef4e5;box-shadow:0 8px 20px rgba(45,75,15,.18);font-size:1.25rem}
-.zm-home__steps>div b{animation:zm-step-pulse 5s ease-in-out infinite}
-.zm-home__steps>div:nth-child(1) b{animation-delay:0s}
-.zm-home__steps>div:nth-child(2) b{animation-delay:1s}
-.zm-home__steps>div:nth-child(3) b{animation-delay:2s}
-.zm-home__steps>div:nth-child(4) b{animation-delay:3s}
-.zm-home__steps>div:nth-child(5) b{animation-delay:4s}
-@keyframes zm-step-pulse{0%,18%{border-color:var(--accent);box-shadow:0 0 0 0 rgba(159,199,74,.5),0 8px 20px rgba(45,75,15,.2);transform:scale(1.08)}28%,100%{border-color:#eef4e5;box-shadow:0 0 0 12px rgba(159,199,74,0),0 8px 20px rgba(45,75,15,.18);transform:scale(1)}}
+.zm-home__steps>div b{overflow:visible;background:#fff!important;border-color:var(--green);color:var(--green);box-shadow:0 7px 18px rgba(45,75,15,.12);animation-duration:6s;animation-timing-function:ease-in-out;animation-iteration-count:infinite}
+.zm-home__steps>div b:after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#20310b;font-size:1.55rem;font-weight:900;opacity:0;animation-duration:6s;animation-timing-function:linear;animation-iteration-count:infinite}
+.zm-home__steps>div:nth-child(1) b{animation-name:zm-step-1}.zm-home__steps>div:nth-child(1) b:after{animation-name:zm-check-1}
+.zm-home__steps>div:nth-child(2) b{animation-name:zm-step-2}.zm-home__steps>div:nth-child(2) b:after{animation-name:zm-check-2}
+.zm-home__steps>div:nth-child(3) b{animation-name:zm-step-3}.zm-home__steps>div:nth-child(3) b:after{animation-name:zm-check-3}
+.zm-home__steps>div:nth-child(4) b{animation-name:zm-step-4}.zm-home__steps>div:nth-child(4) b:after{animation-name:zm-check-4}
+.zm-home__steps>div:nth-child(5) b{animation-name:zm-step-5}.zm-home__steps>div:nth-child(5) b:after{animation-name:zm-check-5}
+@keyframes zm-step-1{0%,14%{background:var(--green)!important;color:#fff;transform:scale(1.08);box-shadow:0 0 0 9px rgba(159,199,74,.18)}18%,94%{background:var(--accent)!important;color:transparent;transform:scale(1)}95%,100%{background:#fff!important;color:var(--green)}}
+@keyframes zm-step-2{0%,16%{background:#fff!important;color:var(--green)}17%,31%{background:var(--green)!important;color:#fff;transform:scale(1.08);box-shadow:0 0 0 9px rgba(159,199,74,.18)}35%,94%{background:var(--accent)!important;color:transparent;transform:scale(1)}95%,100%{background:#fff!important;color:var(--green)}}
+@keyframes zm-step-3{0%,33%{background:#fff!important;color:var(--green)}34%,48%{background:var(--green)!important;color:#fff;transform:scale(1.08);box-shadow:0 0 0 9px rgba(159,199,74,.18)}52%,94%{background:var(--accent)!important;color:transparent;transform:scale(1)}95%,100%{background:#fff!important;color:var(--green)}}
+@keyframes zm-step-4{0%,50%{background:#fff!important;color:var(--green)}51%,65%{background:var(--green)!important;color:#fff;transform:scale(1.08);box-shadow:0 0 0 9px rgba(159,199,74,.18)}69%,94%{background:var(--accent)!important;color:transparent;transform:scale(1)}95%,100%{background:#fff!important;color:var(--green)}}
+@keyframes zm-step-5{0%,67%{background:#fff!important;color:var(--green)}68%,84%{background:var(--green)!important;color:#fff;transform:scale(1.08);box-shadow:0 0 0 9px rgba(159,199,74,.18)}88%,94%{background:var(--accent)!important;color:transparent;transform:scale(1)}95%,100%{background:#fff!important;color:var(--green)}}
+@keyframes zm-check-1{0%,17%,95%,100%{opacity:0}18%,94%{opacity:1}}@keyframes zm-check-2{0%,34%,95%,100%{opacity:0}35%,94%{opacity:1}}@keyframes zm-check-3{0%,51%,95%,100%{opacity:0}52%,94%{opacity:1}}@keyframes zm-check-4{0%,68%,95%,100%{opacity:0}69%,94%{opacity:1}}@keyframes zm-check-5{0%,87%,95%,100%{opacity:0}88%,94%{opacity:1}}
 .zm-home__steps>div span{margin-top:20px;font-size:1rem;line-height:1.35}
 @media(max-width:900px){.zm-home__steps>div{text-align:left;padding:0}.zm-home__steps>div:not(:last-child):after{display:none!important}.zm-home__steps b{margin:0}.zm-home__steps>div span{margin-top:0}}
 @media(prefers-reduced-motion:reduce){.zm-home__steps>div b{animation:none}}
