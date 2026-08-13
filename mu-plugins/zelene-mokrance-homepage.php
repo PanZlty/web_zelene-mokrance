@@ -66,6 +66,8 @@ add_action( 'wp_enqueue_scripts', function () {
 .zm-home__hero{background-image:url("https://www.zelenemokrance.sk/wp-content/uploads/2026/08/Dron-02s.webp")}
 .zm-home__quote{background-image:url("https://www.zelenemokrance.sk/wp-content/uploads/2026/08/DSC_2411.webp")}
 .zm-home__feature-icon{margin-top:18px;color:var(--green);box-shadow:0 8px 22px rgba(66,102,22,.12)}
+.zm-home__split li{position:relative;padding-left:28px}
+.zm-home__split li:before{content:"";position:absolute;left:2px;top:50%;width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(80,125,12,.1);transform:translateY(-50%)}
 .zm-home__features>div{padding:34px 30px;background:#fff;border-radius:18px;transition:transform .25s ease,box-shadow .25s ease}
 .zm-home__features>div:hover{transform:translateY(-5px);box-shadow:0 18px 42px rgba(48,73,20,.1)}
 .zm-home__steps>div{position:relative;text-align:center;padding:0 18px}
