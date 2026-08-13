@@ -1,0 +1,48 @@
+name: Deploy MU Plugins
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/deploy-mu-plugins.yml"
+      - "mu-plugins/**"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+
+      - name: Validate PHP syntax
+        run: find mu-plugins -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Install lftp
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp
+
+      - name: Upload MU plugins to WordPress via SFTP
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+          SFTP_USERNAME: ${{ secrets.SFTP_USERNAME }}
+          SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+          SFTP_TARGET: ${{ secrets.SFTP_TARGET }}
+        run: |
+          lftp -u "$SFTP_USERNAME","$SFTP_PASSWORD" -p "$SFTP_PORT" sftp://"$SFTP_HOST" <<EOF
+          set sftp:auto-confirm yes
+          set net:timeout 20
+          set net:max-retries 2
+          lcd mu-plugins
+          mirror -R --only-newer --verbose ./ "$SFTP_TARGET"
+          bye
+          EOF
