@@ -73,7 +73,7 @@ function zm_ponuka_pozemkov_styles() {
         .zm-plots-table tbody th{font-weight:600;color:inherit}
         .zm-plots-table th:nth-child(3),.zm-plots-table td:nth-child(3){text-align:right}
         .zm-plots-table th:nth-child(4),.zm-plots-table td:nth-child(4){text-align:center}
-        .zm-plots-table tbody tr{background:#fff;box-shadow:0 4px 14px rgba(34,34,34,.05)}
+        .zm-plots-table tbody tr{background:#fff;box-shadow:none}
         .zm-plots-table tbody tr> :first-child{border-radius:10px 0 0 10px}
         .zm-plots-table tbody tr> :last-child{border-radius:0 10px 10px 0}
         .zm-plots-table tbody tr:hover{filter:brightness(.98)}
