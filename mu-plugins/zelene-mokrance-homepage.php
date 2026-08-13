@@ -61,7 +61,7 @@ add_shortcode( 'zm_homepage', function () {
 // Native Bricks hero stats: transparent bottom gradient and readable scale.
 add_action( 'wp_enqueue_scripts', function () {
 	if ( ! is_front_page() ) return;
-	wp_add_inline_style( 'zm-homepage', '.zm-home__hero-stats{background:linear-gradient(180deg,rgba(20,38,12,0),rgba(20,38,12,.82));color:#fff;backdrop-filter:blur(2px);padding-top:22px}.zm-home__hero-stats div{padding:24px 30px 30px;border-right:1px solid rgba(255,255,255,.22)}.zm-home__hero-stats div:last-child{border:0}.zm-home__hero-stats strong{font-size:clamp(1.8rem,2.8vw,2.25rem);line-height:1.1;color:#fff}.zm-home__hero-stats span{font-size:clamp(.95rem,1.3vw,1.1rem);margin-top:7px;color:rgba(255,255,255,.86)}@media(max-width:620px){.zm-home__hero-stats div{padding:16px 18px}.zm-home__hero-stats strong{font-size:1.5rem}.zm-home__hero-stats span{font-size:.95rem}}' );
+	wp_add_inline_style( 'zm-homepage', '.zm-home__hero-stats{background:linear-gradient(180deg,rgba(20,38,12,0),rgba(20,38,12,.82));color:#fff;backdrop-filter:blur(2px);padding-top:22px}' );
 }, 50 );
 
 add_action( 'wp_enqueue_scripts', function () {
@@ -98,7 +98,6 @@ add_action( 'wp_enqueue_scripts', function () {
 .zm-home__hero{min-height:unset!important}
 .zm-home__hero-stats strong,.zm-home__hero-stats span{font-family:inherit!important;color:inherit!important}.zm-home__hero-stats strong{font-size:1em!important}.zm-home__hero-stats span{font-size:.55em!important}
 .zm-home__hero-stats .zm-home__hero-stat-label{display:block!important;padding:0!important;margin-top:7px!important}
-.zm-home__hero-stats div{border-right:0!important}.zm-home__hero-stats>div{border-right:1px solid rgba(255,255,255,.22)!important}.zm-home__hero-stats>div:last-child{border-right:0!important}
 ' );
 }, 30 );
 
