@@ -58,6 +58,16 @@ add_shortcode( 'zm_homepage', function () {
 	<?php return ob_get_clean();
 } );
 
+// Native Bricks elements do not carry the shortcode's inline CSS variables.
+// Keep the same visual backgrounds when the layout is authored directly in Bricks.
+add_action( 'wp_enqueue_scripts', function () {
+	if ( ! is_front_page() ) return;
+	wp_add_inline_style( 'zm-homepage', '
+.zm-home__hero{background-image:url("https://www.zelenemokrance.sk/wp-content/uploads/2026/08/Dron-02s.webp")}
+.zm-home__quote{background-image:url("https://www.zelenemokrance.sk/wp-content/uploads/2026/08/DSC_2411.webp")}
+' );
+}, 30 );
+
 add_action( 'wp_enqueue_scripts', function () {
 	if ( ! is_front_page() ) return;
 	wp_register_style( 'zm-homepage', false, array(), ZM_HOME_VERSION );
