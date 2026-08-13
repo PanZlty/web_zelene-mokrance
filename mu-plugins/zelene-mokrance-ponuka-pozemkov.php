@@ -54,7 +54,13 @@ function zm_render_ponuka_pozemkov($atts) {
                     <tr>
                         <th scope="row">Pozemok <?php echo esc_html($plot_id); ?></th>
                         <td><?php echo $area !== null && $area !== '' ? esc_html(number_format_i18n((float) $area, 0) . ' m²') : '—'; ?></td>
-                        <td><?php echo $price !== null && $price !== '' ? esc_html(number_format_i18n((float) $price, 0) . ' €') : 'Na vyžiadanie'; ?></td>
+                        <td><?php
+                            if (in_array($status, array('reserved', 'sold'), true)) {
+                                echo '–';
+                            } else {
+                                echo $price !== null && $price !== '' ? esc_html(number_format_i18n((float) $price, 0) . ' €') : 'Na vyžiadanie';
+                            }
+                        ?></td>
                         <td><span class="zm-plot-status zm-plot-status--<?php echo esc_attr($status); ?>"><?php echo esc_html($labels[$status]); ?></span></td>
                     </tr>
                 <?php endforeach; ?>
@@ -87,5 +93,4 @@ function zm_ponuka_pozemkov_styles() {
     <?php
 }
 add_action('wp_head', 'zm_ponuka_pozemkov_styles', 30);
-
 
