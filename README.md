@@ -6,6 +6,8 @@ Zdroj pravdy pre WordPress web https://www.zelenemokrance.sk/ a vlastny kod nasa
 
 - docs/WEB-AUDIT-2026-08-13.md
 - docs/CURRENT-SITE-SNAPSHOT-2026-08-13.md
+- docs/CURRENT-SITE-TEXTS-2026-08-13.md
+- docs/CURRENT-SITE-TEXTS-2026-08-13.json
 - docs/IMPLEMENTATION-BACKLOG.md
 - mu-plugins/README.md
 
