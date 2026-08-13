@@ -82,9 +82,11 @@ function zm_ponuka_pozemkov_styles() {
         .zm-plots-table tbody tr:last-child th,.zm-plots-table tbody tr:last-child td{border-bottom:0}
         .zm-plots-table thead th{background:var(--zm-color-header-green,#507d0c);color:#fff;font-size:16px;font-weight:600;letter-spacing:.02em}
         .zm-plots-table tbody th{font-weight:600;color:var(--zm-color-header-green,#507d0c)}
+        .zm-plots-table th:nth-child(3),.zm-plots-table td:nth-child(3){text-align:right}
+        .zm-plots-table th:nth-child(4),.zm-plots-table td:nth-child(4){text-align:center}
         .zm-plots-table tbody tr:nth-child(even){background:#f8faf5}
         .zm-plots-table tbody tr:hover{background:#f1f6e9}
-        .zm-plot-status{display:inline-flex;min-width:118px;justify-content:center;padding:8px 12px;border-radius:999px;font-size:14px;font-weight:600}
+        .zm-plot-status{display:flex;width:100%;min-height:38px;align-items:center;justify-content:center;padding:8px 12px;border-radius:8px;font-size:14px;font-weight:600;text-align:center}
         .zm-plot-status--available{background:#e5f3d1;color:#365c09}
         .zm-plot-status--reserved{background:#fff0bf;color:#765700}
         .zm-plot-status--sold{background:#f8d7d7;color:#8a2020}
