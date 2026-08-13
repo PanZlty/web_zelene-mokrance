@@ -6,7 +6,7 @@ Zdroj pravdy pre WordPress web https://www.zelenemokrance.sk/ a vlastny kod nasa
 
 - docs/WEB-AUDIT-2026-08-13.md
 - docs/IMPLEMENTATION-BACKLOG.md
-- .github/workflows/deploy-mu-plugins.yml
+- mu-plugins/README.md
 
 ## Pravidla
 
@@ -18,8 +18,6 @@ Zdroj pravdy pre WordPress web https://www.zelenemokrance.sk/ a vlastny kod nasa
 
 ## Deploy
 
-Push do main pri zmene mu-plugins/** spusti GitHub Actions workflow.
+Automaticky deploy workflow pre MU-plugin este nie je aktivny. V repozitari sa momentalne nenachadza `.github/workflows/deploy-mu-plugins.yml`, preto push do `main` sam o sebe produkciu nemení.
 
-GitHub Secrets: SFTP_HOST, SFTP_PORT, SFTP_USERNAME, SFTP_PASSWORD, SFTP_TARGET.
-
-Cielova cesta v SFTP_TARGET musi byt potvrdena spravcom hostingu; do repozitara sa neuklada.
+Pred zapnutim deployu treba potvrdit presny cielovy SFTP adresar u hostingu a nasledne nastavit GitHub Secrets: `SFTP_HOST`, `SFTP_PORT`, `SFTP_USERNAME`, `SFTP_PASSWORD`, `SFTP_TARGET`. Cesta sa neuklada do repozitara.
