@@ -35,14 +35,6 @@ function zm_render_ponuka_pozemkov($atts) {
     ?>
     <div class="zm-plots-table-wrap" role="region" aria-label="Ponuka pozemkov" tabindex="0">
         <table class="zm-plots-table">
-            <thead>
-                <tr>
-                    <th scope="col">Číslo pozemku</th>
-                    <th scope="col">Rozloha</th>
-                    <th scope="col">Cena</th>
-                    <th scope="col">Stav</th>
-                </tr>
-            </thead>
             <tbody>
                 <?php foreach ($posts as $post) :
                     $plot_id = (string) get_field('plot_id', $post->ID);
@@ -75,10 +67,9 @@ add_shortcode('zm_pozemky_table', 'zm_render_ponuka_pozemkov');
 function zm_ponuka_pozemkov_styles() {
     ?>
     <style id="zm-ponuka-pozemkov-css">
-        .zm-plots-table-wrap{width:100%;overflow-x:auto;border:0;border-radius:14px;background:#fff;box-shadow:0 12px 34px rgba(34,34,34,.07)}
+        .zm-plots-table-wrap{width:100%;overflow-x:auto;border:0;border-radius:0;background:transparent;box-shadow:none}
         .zm-plots-table{width:100%;min-width:680px;border-collapse:separate;border-spacing:0 8px;font-family:var(--zm-font-body,Dosis,sans-serif);color:var(--zm-color-ink,#222)}
         .zm-plots-table th,.zm-plots-table td{padding:16px 18px;border:0;text-align:left;vertical-align:middle}
-        .zm-plots-table thead th{background:var(--zm-color-header-green,#507d0c);color:#fff;font-size:16px;font-weight:600;letter-spacing:.02em}
         .zm-plots-table tbody th{font-weight:600;color:inherit}
         .zm-plots-table th:nth-child(3),.zm-plots-table td:nth-child(3){text-align:right}
         .zm-plots-table th:nth-child(4),.zm-plots-table td:nth-child(4){text-align:center}
@@ -87,7 +78,7 @@ function zm_ponuka_pozemkov_styles() {
         .zm-plots-table tbody tr> :last-child{border-radius:0 10px 10px 0}
         .zm-plots-table tbody tr:hover{filter:brightness(.98)}
         .zm-plot-row--reserved>th,.zm-plot-row--reserved>td{background:#f6b84a;color:#4f3500}
-        .zm-plot-row--sold>th,.zm-plot-row--sold>td{background:#e76f6f;color:#fff}
+        .zm-plot-row--sold>th,.zm-plot-row--sold>td{background:#f7dddd;color:#752b2b}
         .zm-plot-row--available>th,.zm-plot-row--available>td{background:#fff}
         .zm-plot-status{display:block;width:100%;padding:0;background:transparent;border-radius:0;font-size:14px;font-weight:600;text-align:center}
         .zm-plot-status--available{color:var(--zm-color-header-green,#507d0c)}
