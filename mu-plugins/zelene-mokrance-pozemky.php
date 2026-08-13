@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Zelené Mokrance – Pozemky
  * Description: CPT Pozemky a ACF polia pripravené pre import cez WP All Import Pro.
- * Version: 1.1.0
+ * Version: 1.1.1
  */
 
 defined('ABSPATH') || exit;
@@ -42,7 +42,19 @@ add_action('acf/init', function () {
     acf_add_local_field_group(array(
         'key' => 'group_zm_pozemok_obchodne_udaje',
         'title' => 'Údaje pozemku',
-        'fields' => array(
+        'fields' => array(),
+        'location' => array(array(array(
+            'param' => 'post_type',
+            'operator' => '==',
+            'value' => ZM_POZEMKY_POST_TYPE,
+        ))),
+        'position' => 'acf_after_title',
+        'style' => 'default',
+        'active' => true,
+        'show_in_rest' => 1,
+    ));
+
+    $fields = array(
             array(
                 'key' => 'field_zm_plot_id',
                 'label' => 'ID pozemku',
@@ -95,17 +107,12 @@ add_action('acf/init', function () {
                 'wrapper' => array('width' => '25'),
                 'instructions' => 'Synchronizuje sa z Google Sheets cez WP All Import Pro.',
             ),
-        ),
-        'location' => array(array(array(
-            'param' => 'post_type',
-            'operator' => '==',
-            'value' => ZM_POZEMKY_POST_TYPE,
-        ))),
-        'position' => 'acf_after_title',
-        'style' => 'default',
-        'active' => true,
-        'show_in_rest' => 1,
-    ));
+    );
+
+    foreach ($fields as $field) {
+        $field['parent'] = 'group_zm_pozemok_obchodne_udaje';
+        acf_add_local_field($field);
+    }
 });
 
 function zm_pozemky_seed_posts() {
