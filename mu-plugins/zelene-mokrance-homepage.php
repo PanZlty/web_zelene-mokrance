@@ -65,6 +65,15 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_add_inline_style( 'zm-homepage', '
 .zm-home__hero{background-image:url("https://www.zelenemokrance.sk/wp-content/uploads/2026/08/Dron-02s.webp")}
 .zm-home__quote{background-image:url("https://www.zelenemokrance.sk/wp-content/uploads/2026/08/DSC_2411.webp")}
+.zm-home__feature-icon{margin-top:18px;color:var(--green);box-shadow:0 8px 22px rgba(66,102,22,.12)}
+.zm-home__features>div{padding:34px 30px;background:#fff;border-radius:18px;transition:transform .25s ease,box-shadow .25s ease}
+.zm-home__features>div:hover{transform:translateY(-5px);box-shadow:0 18px 42px rgba(48,73,20,.1)}
+.zm-home__steps>div{position:relative;text-align:center;padding:0 18px}
+.zm-home__steps>div:not(:last-child):after{content:"";display:block!important;position:absolute;top:31px;left:calc(50% + 38px);right:calc(-50% + 38px);height:2px;background:linear-gradient(90deg,var(--accent),#dce5d1);z-index:0}
+.zm-home__steps>div:last-child:after,.zm-home__steps>div>div:after{display:none!important;content:none!important}
+.zm-home__steps b{position:relative;z-index:1;width:64px;height:64px;margin-inline:auto;border:5px solid #eef4e5;box-shadow:0 8px 20px rgba(45,75,15,.18);font-size:1.25rem}
+.zm-home__steps>div span{margin-top:20px;font-size:1rem;line-height:1.35}
+@media(max-width:900px){.zm-home__steps>div{text-align:left;padding:0}.zm-home__steps>div:not(:last-child):after{display:none!important}.zm-home__steps b{margin:0}.zm-home__steps>div span{margin-top:0}}
 ' );
 }, 30 );
 
