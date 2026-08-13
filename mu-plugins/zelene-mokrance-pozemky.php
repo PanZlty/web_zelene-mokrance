@@ -1,3 +1,4 @@
+
 <?php
 /**
  * Plugin Name: Zelené Mokrance – pozemky a synchronizácia
@@ -152,7 +153,7 @@ function zm_pozemky_sync_from_google_sheets() {
     $aliases = array(
         'plot_id' => array('id_pozemku', 'plot_id'),
         'price' => array('cena', 'price'),
-        'area_m2' => array('rozloha_m2', 'rozloha', 'area_m2'),
+        'area_m2' => array('rozloha_m2', 'rozloha_m', 'rozloha', 'area_m2'),
         'status' => array('stav', 'status'),
     );
     $columns = array();
