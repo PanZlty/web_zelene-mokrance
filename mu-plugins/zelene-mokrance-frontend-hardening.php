@@ -47,6 +47,11 @@ add_action('wp_head', function () {
  */
 function zm_frontend_hardening_global_css() {
     return <<<'CSS'
+:root{--zm-font-heading:"Nunito Sans",sans-serif;--zm-font-body:"Nunito Sans",sans-serif}
+html,body,button,input,select,textarea,
+.brx-body,.brxe-text,.brxe-text-basic,.brxe-heading,
+h1,h2,h3,h4,h5,h6{font-family:"Nunito Sans",sans-serif!important}
+h1,h2,h3,h4,h5,h6,.brxe-heading{font-weight:700}
 .header-inner-wrap .d-flex .header-wrap-6-logo{padding-left:0;padding-right:0;margin-right:110px;margin-left:100px}
 .header-wrap-6-icons .header-social-icons ul{visibility:hidden;display:flex}
 .page-title-wrap .item-address,#module_properties .d-flex .item-address{visibility:hidden}
@@ -100,7 +105,14 @@ add_action('wp_enqueue_scripts', function () {
         return;
     }
 
-    wp_register_style('zm-frontend-hardening', false, array(), '1.0.0');
+    wp_enqueue_style(
+        'zm-font-nunito-sans',
+        'https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700;6..12,800&display=swap',
+        array(),
+        null
+    );
+
+    wp_register_style('zm-frontend-hardening', false, array('zm-font-nunito-sans'), '1.0.1');
     wp_enqueue_style('zm-frontend-hardening');
 
     $css = zm_frontend_hardening_global_css() . "\n" . zm_frontend_hardening_page_css();
