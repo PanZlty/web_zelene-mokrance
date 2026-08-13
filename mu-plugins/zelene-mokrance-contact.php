@@ -219,24 +219,3 @@ add_action( 'wp_enqueue_scripts', function () {
 .zm-contact__references{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.zm-contact__reference{margin:0;overflow:hidden;border-radius:16px;background:#fff;border:1px solid #e1e6dc}.zm-contact__reference img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}.zm-contact__reference figcaption{padding:12px 16px;font-size:.85rem;font-weight:800;color:var(--green)}@media(max-width:620px){.zm-contact__references{grid-template-columns:1fr}}
 ' );
 } );
-
-add_action( 'init', function () {
-	if ( get_option( 'zm_contact_page_version' ) === ZM_CONTACT_VERSION ) return;
-	$page = get_page_by_path( 'kontakt' );
-	if ( ! $page ) {
-		$page_id = wp_insert_post( array( 'post_type' => 'page', 'post_status' => 'publish', 'post_title' => 'Kontakt', 'post_name' => 'kontakt', 'post_content' => '[zm_contact_page]' ) );
-	} else {
-		$page_id = $page->ID;
-		wp_update_post( array( 'ID' => $page_id, 'post_content' => '[zm_contact_page]' ) );
-	}
-	if ( $page_id && ! is_wp_error( $page_id ) ) {
-		$elements = array(
-			array( 'id' => 'zmcsec', 'name' => 'section', 'parent' => 0, 'children' => array( 'zmccon' ), 'settings' => array( '_padding' => array( 'top' => '0', 'right' => '0', 'bottom' => '0', 'left' => '0' ) ) ),
-			array( 'id' => 'zmccon', 'name' => 'container', 'parent' => 'zmcsec', 'children' => array( 'zmcsho' ), 'settings' => array( '_width' => '100%', '_maxWidth' => '100%' ) ),
-			array( 'id' => 'zmcsho', 'name' => 'shortcode', 'parent' => 'zmccon', 'children' => array(), 'settings' => array( 'shortcode' => '[zm_contact_page]' ) ),
-		);
-		update_post_meta( $page_id, '_bricks_page_content_2', $elements );
-		update_post_meta( $page_id, '_bricks_editor_mode', 'bricks' );
-		update_option( 'zm_contact_page_version', ZM_CONTACT_VERSION, false );
-	}
-}, 30 );
