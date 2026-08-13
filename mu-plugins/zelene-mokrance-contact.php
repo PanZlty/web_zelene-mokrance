@@ -54,6 +54,12 @@ function zm_contact_phone_href( $phone ) {
 	return 'tel:' . preg_replace( '/[^0-9+]/', '', (string) $phone );
 }
 
+function zm_contact_image( $id, $size, $alt, $loading = 'lazy' ) {
+	$html = wp_get_attachment_image( (int) $id, $size, false, array( 'loading' => $loading ) );
+	if ( ! $html ) return '';
+	return preg_replace( '/\salt="[^"]*"/i', ' alt="' . esc_attr( $alt ) . '"', $html, 1 );
+}
+
 function zm_contact_logos( $field ) {
 	$ids = zm_contact_value( $field, array() );
 	if ( ! is_array( $ids ) || ! $ids ) {
@@ -63,7 +69,7 @@ function zm_contact_logos( $field ) {
 	foreach ( $ids as $id ) {
 		$id = is_array( $id ) && isset( $id['ID'] ) ? $id['ID'] : $id;
 		$title = get_the_title( (int) $id );
-		$html .= '<div class="zm-contact__logo">' . wp_get_attachment_image( (int) $id, 'medium', false, array( 'loading' => 'lazy', 'alt' => $title ) ) . '</div>';
+		$html .= '<div class="zm-contact__logo">' . zm_contact_image( $id, 'medium', $title ) . '</div>';
 	}
 	return $html . '</div>';
 }
@@ -75,7 +81,7 @@ function zm_contact_references() {
 	foreach ( $ids as $id ) {
 		$id = is_array( $id ) && isset( $id['ID'] ) ? $id['ID'] : $id;
 		$title = get_the_title( (int) $id );
-		$html .= '<figure class="zm-contact__reference">' . wp_get_attachment_image( (int) $id, 'large', false, array( 'loading' => 'lazy', 'alt' => $title ) ) . '<figcaption>' . esc_html( $title ) . '</figcaption></figure>';
+		$html .= '<figure class="zm-contact__reference">' . zm_contact_image( $id, 'large', $title ) . '<figcaption>' . esc_html( $title ) . '</figcaption></figure>';
 	}
 	return $html . '</div>';
 }
@@ -130,7 +136,7 @@ add_shortcode( 'zm_contact_page', function () {
 
 		<section class="zm-contact__grid">
 			<div class="zm-contact__broker">
-				<div class="zm-contact__photo"><?php echo $photo_id ? wp_get_attachment_image( $photo_id, 'large', false, array( 'loading' => 'eager' ) ) : '<span>RV</span>'; ?></div>
+				<div class="zm-contact__photo"><?php echo $photo_id ? zm_contact_image( $photo_id, 'large', $broker_name, 'eager' ) : '<span>RV</span>'; ?></div>
 				<div class="zm-contact__broker-body">
 					<p class="zm-contact__eyebrow">Predaj zastrešuje</p>
 					<h2><?php echo esc_html( $broker_name ); ?></h2>
