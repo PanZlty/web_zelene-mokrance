@@ -89,12 +89,10 @@ function zm_ponuka_pozemkov_styles() {
         .zm-plots-table tbody th{font-weight:600;color:inherit}
         .zm-plots-table th:nth-child(3),.zm-plots-table td:nth-child(3){text-align:right}
         .zm-plots-table th:nth-child(4),.zm-plots-table td:nth-child(4){text-align:center}
-        .zm-plots-table tbody tr:nth-child(odd)>th,.zm-plots-table tbody tr:nth-child(odd)>td{background:#faf3ea}
-        .zm-plots-table tbody tr:nth-child(even)>th,.zm-plots-table tbody tr:nth-child(even)>td{background:#e8e6e1}
-        .zm-plots-table tbody tr:hover>th,.zm-plots-table tbody tr:hover>td{background:#f0eadf}
-        .zm-plot-row--reserved{color:#7a5300}
-        .zm-plot-row--sold{color:#777}
-        .zm-plot-row--available{color:#171717}
+        .zm-plot-row--available>th,.zm-plot-row--available>td{background:#fff;color:#171717}
+        .zm-plot-row--reserved>th,.zm-plot-row--reserved>td{background:#f6b84a;color:#4f3500}
+        .zm-plot-row--sold>th,.zm-plot-row--sold>td{background:#f7dddd;color:#752b2b}
+        .zm-plots-table tbody tr:hover>th,.zm-plots-table tbody tr:hover>td{filter:brightness(.98)}
         .zm-plot-status{display:block;width:100%;padding:0;background:transparent;border-radius:0;font-size:14px;font-weight:600;text-align:center}
         .zm-plot-status--available{color:var(--zm-color-header-green,#507d0c)}
         .zm-plot-status--reserved,.zm-plot-status--sold{color:inherit}
@@ -112,6 +110,11 @@ function zm_ponuka_pozemkov_styles() {
             button.setAttribute('aria-sort',direction);
             var multiplier=direction==='ascending'?1:-1;
             Array.from(body.querySelectorAll('tr')).sort(function(a,b){
+                if(key==='price'){
+                    var aUnavailable=Number(a.dataset.status)>0;
+                    var bUnavailable=Number(b.dataset.status)>0;
+                    if(aUnavailable!==bUnavailable){return aUnavailable?1:-1;}
+                }
                 return (Number(a.dataset[key])-Number(b.dataset[key]))*multiplier;
             }).forEach(function(row){body.appendChild(row);});
         });
