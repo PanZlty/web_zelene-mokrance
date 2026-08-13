@@ -10,4 +10,18 @@ Rules:
 - Production deployment is performed only by the GitHub Actions workflow.
 - SFTP target is configured in GitHub Secrets and is not stored here.
 
-No production MU-plugin is included yet. The first code change should be the reviewed P0 technical-hardening module after the redirect/menu and Elementor content decisions are approved.
+## Active module
+
+`zelene-mokrance-frontend-hardening.php` is the first reviewed technical-hardening module. It:
+
+- hides the Houzez compare panel and login/register/reset demo UI on the public frontend;
+- replaces the old `http://zelenemokrance.sk` root menu URL with the configured canonical `home_url()`;
+- carries reviewed published-page layout rules out of YellowPencil into version-controlled code;
+- removes YellowPencil's generated frontend CSS while keeping YellowPencil available in wp-admin/live preview;
+- intentionally does not migrate draft-only Byty newsletter styling or delete YellowPencil data, so rollback remains possible.
+
+The module is safe to roll back by removing the file from the deployed MU-plugin directory. YellowPencil options and post meta are not deleted by this change.
+
+## Deployment status
+
+The code is committed to GitHub. Production deployment remains blocked until `SFTP_TARGET` is verified with the hosting administrator. Do not deploy to an assumed path.
