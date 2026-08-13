@@ -1,24 +1,24 @@
-# Pozemky â€“ dĂˇtovĂ˝ model a Google Sheets synchronizĂˇcia
+# Pozemky – dátový model a Google Sheets synchronizácia
 
 ## WordPress
 
 - CPT key: `pozemok`
-- VerejnĂ˝ slug: `/pozemky/`
-- PoÄŤet inicializovanĂ˝ch zĂˇznamov: 55 (`Pozemok 1` aĹľ `Pozemok 55`)
-- PĂˇrovacĂ­ kÄľĂşÄŤ: ACF `plot_id`, celĂ© ÄŤĂ­slo 1â€“55
+- Verejný slug: `/pozemky/`
+- Počet inicializovaných záznamov: 55 (`Pozemok 1` až `Pozemok 55`)
+- Párovací kľúč: ACF `plot_id`, celé číslo 1–55
 
 ## ACF polia
 
-| Pole | Typ | VĂ˝znam |
+| Pole | Typ | Význam |
 | --- | --- | --- |
-| `plot_id` | Number | StabilnĂ© ID pozemku 1â€“55 |
-| `area_m2` | Number | Rozloha v mÂ˛ |
-| `price` | Number | Cena v eurĂˇch; synchronizovanĂˇ zo Sheets |
-| `status` | Select | `available`, `reserved`, `sold`; synchronizovanĂ© zo Sheets |
+| `plot_id` | Number | Stabilné ID pozemku 1–55 |
+| `area_m2` | Number | Rozloha v m² |
+| `price` | Number | Cena v eurách; synchronizovaná zo Sheets |
+| `status` | Select | `available`, `reserved`, `sold`; synchronizované zo Sheets |
 
 ## Google Sheets
 
-TabuÄľku publikujte ako CSV. PovinnĂ© hlaviÄŤky:
+Tabuľku publikujte ako CSV. Povinné hlavičky:
 
 ```csv
 plot_id,price,status
@@ -27,20 +27,20 @@ plot_id,price,status
 3,91000,sold
 ```
 
-VoliteÄľnĂˇ hlaviÄŤka `area_m2` mĂ´Ĺľe synchronizovaĹĄ aj rozlohu. Ak chĂ˝ba, rozloha sa spravuje ruÄŤne v ACF a cron ju nemenĂ­.
+Voliteľná hlavička `area_m2` môže synchronizovať aj rozlohu. Ak chýba, rozloha sa spravuje ručne v ACF a cron ju nemení.
 
-URL CSV sa nezapisuje napevno do repozitĂˇra. NastavĂ­ sa v `wp-config.php` alebo v hostiteÄľskom prostredĂ­:
+URL CSV sa nezapisuje napevno do repozitára. Nastaví sa v `wp-config.php` alebo v hostiteľskom prostredí:
 
 ```php
 define('ZM_POZEMKY_GOOGLE_SHEET_CSV_URL', 'https://docs.google.com/spreadsheets/d/.../export?format=csv&gid=...');
 ```
 
-Cron beĹľĂ­ kaĹľdĂ˝ch 15 minĂşt. Frontend vĹľdy ÄŤĂ­ta uloĹľenĂ© ACF hodnoty, nie Google Sheets priamo.
+Cron beží každých 15 minút. Frontend vždy číta uložené ACF hodnoty, nie Google Sheets priamo.
 
-PovolenĂ© statusy:
+Povolené statusy:
 
-- `available` â€“ DostupnĂ˝
-- `reserved` â€“ RezervovanĂ˝
-- `sold` â€“ PredanĂ˝
+- `available` – Dostupný
+- `reserved` – Rezervovaný
+- `sold` – Predaný
 
-SlovenskĂ© hodnoty (`dostupnĂ˝`, `rezervovanĂ˝`, `predanĂ˝`) synchronizĂˇcia normalizuje na internĂ© anglickĂ© hodnoty.
+Slovenské hodnoty (`dostupný`, `rezervovaný`, `predaný`) synchronizácia normalizuje na interné anglické hodnoty.
