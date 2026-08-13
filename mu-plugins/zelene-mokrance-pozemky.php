@@ -1,121 +1,20 @@
 <?php
 /**
- * Plugin Name: Zelené Mokrance – Pozemky
- * Description: CPT Pozemky a ACF polia pripravené pre import cez WP All Import Pro.
- * Version: 1.1.1
+ * Plugin Name: Zelené Mokrance – inicializácia pozemkov
+ * Description: Vytvorí a migruje záznamy Pozemok 01–55. CPT a polia spravuje ACF Pro.
+ * Version: 2.0.0
  */
 
 defined('ABSPATH') || exit;
 
 const ZM_POZEMKY_POST_TYPE = 'pozemok';
-const ZM_POZEMKY_SCHEMA_VERSION = '1.1.0';
+const ZM_POZEMKY_SCHEMA_VERSION = '2.0.0';
 
-add_action('init', function () {
-    register_post_type(ZM_POZEMKY_POST_TYPE, array(
-        'labels' => array(
-            'name' => 'Pozemky',
-            'singular_name' => 'Pozemok',
-            'add_new_item' => 'Pridať pozemok',
-            'edit_item' => 'Upraviť pozemok',
-            'new_item' => 'Nový pozemok',
-            'view_item' => 'Zobraziť pozemok',
-            'search_items' => 'Hľadať pozemky',
-            'not_found' => 'Nenašli sa žiadne pozemky',
-            'all_items' => 'Všetky pozemky',
-            'menu_name' => 'Pozemky',
-        ),
-        'public' => true,
-        'show_in_rest' => true,
-        'menu_icon' => 'dashicons-admin-multisite',
-        'supports' => array('title', 'editor', 'thumbnail', 'revisions'),
-        'has_archive' => true,
-        'rewrite' => array('slug' => 'pozemky', 'with_front' => false),
-        'map_meta_cap' => true,
-    ));
-}, 5);
-
-add_action('acf/init', function () {
-    if (!function_exists('acf_add_local_field_group')) {
+function zm_pozemky_seed_posts() {
+    if (!post_type_exists(ZM_POZEMKY_POST_TYPE)) {
         return;
     }
 
-    acf_add_local_field_group(array(
-        'key' => 'group_zm_pozemok_obchodne_udaje',
-        'title' => 'Údaje pozemku',
-        'fields' => array(),
-        'location' => array(array(array(
-            'param' => 'post_type',
-            'operator' => '==',
-            'value' => ZM_POZEMKY_POST_TYPE,
-        ))),
-        'position' => 'acf_after_title',
-        'style' => 'default',
-        'active' => true,
-        'show_in_rest' => 1,
-    ));
-
-    $fields = array(
-            array(
-                'key' => 'field_zm_plot_id',
-                'label' => 'ID pozemku',
-                'name' => 'plot_id',
-                'type' => 'text',
-                'required' => 1,
-                'maxlength' => 2,
-                'placeholder' => '01',
-                'instructions' => 'Stabilný dvojmiestny kód 01–55. Používa sa ako unique identifier pri importe.',
-                'wrapper' => array('width' => '25'),
-            ),
-            array(
-                'key' => 'field_zm_area_m2',
-                'label' => 'Rozloha',
-                'name' => 'area_m2',
-                'type' => 'number',
-                'required' => 0,
-                'min' => 0,
-                'step' => 0.01,
-                'append' => 'm²',
-                'wrapper' => array('width' => '25'),
-            ),
-            array(
-                'key' => 'field_zm_price',
-                'label' => 'Cena',
-                'name' => 'price',
-                'type' => 'number',
-                'required' => 0,
-                'min' => 0,
-                'step' => 0.01,
-                'append' => '€',
-                'wrapper' => array('width' => '25'),
-                'instructions' => 'Synchronizuje sa z Google Sheets cez WP All Import Pro.',
-            ),
-            array(
-                'key' => 'field_zm_status',
-                'label' => 'Status',
-                'name' => 'status',
-                'type' => 'select',
-                'required' => 1,
-                'choices' => array(
-                    'available' => 'Dostupný',
-                    'reserved' => 'Rezervovaný',
-                    'sold' => 'Predaný',
-                ),
-                'default_value' => 'available',
-                'return_format' => 'value',
-                'allow_null' => 0,
-                'ui' => 1,
-                'wrapper' => array('width' => '25'),
-                'instructions' => 'Synchronizuje sa z Google Sheets cez WP All Import Pro.',
-            ),
-    );
-
-    foreach ($fields as $field) {
-        $field['parent'] = 'group_zm_pozemok_obchodne_udaje';
-        acf_add_local_field($field);
-    }
-});
-
-function zm_pozemky_seed_posts() {
     if (get_option('zm_pozemky_schema_version') === ZM_POZEMKY_SCHEMA_VERSION) {
         return;
     }
@@ -153,10 +52,10 @@ function zm_pozemky_seed_posts() {
             continue;
         }
 
-        update_post_meta($post_id, 'plot_id', $plot_code);
-        update_post_meta($post_id, '_plot_id', 'field_zm_plot_id');
-        update_post_meta($post_id, 'status', 'available');
-        update_post_meta($post_id, '_status', 'field_zm_status');
+        update_field('field_zm_plot_id', $plot_code, $post_id);
+        if (!get_field('status', $post_id)) {
+            update_field('field_zm_status', 'available', $post_id);
+        }
     }
 
     update_option('zm_pozemky_schema_version', ZM_POZEMKY_SCHEMA_VERSION, false);
@@ -164,3 +63,4 @@ function zm_pozemky_seed_posts() {
     flush_rewrite_rules(false);
 }
 add_action('admin_init', 'zm_pozemky_seed_posts');
+
