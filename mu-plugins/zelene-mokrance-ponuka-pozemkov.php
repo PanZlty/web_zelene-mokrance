@@ -37,10 +37,10 @@ function zm_render_ponuka_pozemkov($atts) {
         <table class="zm-plots-table">
             <thead>
                 <tr>
-                    <th scope="col"><button type="button" class="zm-sort" data-sort="plot" aria-label="Zoradiť podľa čísla pozemku">Pozemok <span aria-hidden="true">↕</span></button></th>
-                    <th scope="col"><button type="button" class="zm-sort" data-sort="area" aria-label="Zoradiť podľa rozlohy">Rozloha <span aria-hidden="true">↕</span></button></th>
-                    <th scope="col"><button type="button" class="zm-sort" data-sort="price" aria-label="Zoradiť podľa ceny">Cena <span aria-hidden="true">↕</span></button></th>
-                    <th scope="col"><button type="button" class="zm-sort" data-sort="status" aria-label="Zoradiť podľa dostupnosti">Dostupnosť <span aria-hidden="true">↕</span></button></th>
+                    <th scope="col"><button type="button" class="zm-sort" data-sort="plot" aria-label="Zoradiť podľa čísla pozemku">Pozemok <span class="zm-sort-carets" aria-hidden="true"><i class="zm-caret-up"></i><i class="zm-caret-down"></i></span></button></th>
+                    <th scope="col"><button type="button" class="zm-sort" data-sort="area" aria-label="Zoradiť podľa rozlohy">Rozloha <span class="zm-sort-carets" aria-hidden="true"><i class="zm-caret-up"></i><i class="zm-caret-down"></i></span></button></th>
+                    <th scope="col"><button type="button" class="zm-sort" data-sort="price" aria-label="Zoradiť podľa ceny">Cena <span class="zm-sort-carets" aria-hidden="true"><i class="zm-caret-up"></i><i class="zm-caret-down"></i></span></button></th>
+                    <th scope="col"><button type="button" class="zm-sort" data-sort="status" aria-label="Zoradiť podľa dostupnosti">Dostupnosť <span class="zm-sort-carets" aria-hidden="true"><i class="zm-caret-up"></i><i class="zm-caret-down"></i></span></button></th>
                 </tr>
             </thead>
             <tbody>
@@ -86,9 +86,11 @@ function zm_ponuka_pozemkov_styles() {
         .zm-plots-table thead th:first-child{border-radius:8px 0 0 8px}
         .zm-plots-table thead th:last-child{border-radius:0 8px 8px 0}
         .zm-sort{display:inline-flex;align-items:center;gap:8px;padding:0;border:0;background:transparent;color:inherit;font:inherit;font-weight:700;cursor:pointer}
-        .zm-sort span{font-size:13px;line-height:1;transition:transform .2s ease}
-        .zm-sort[aria-sort="ascending"] span{transform:rotate(0deg)}
-        .zm-sort[aria-sort="descending"] span{transform:rotate(180deg)}
+        .zm-sort-carets{display:inline-flex;flex-direction:column;gap:2px}
+        .zm-sort-carets i{display:block;width:0;height:0;border-right:4px solid transparent;border-left:4px solid transparent;opacity:.32;transition:opacity .2s ease}
+        .zm-caret-up{border-bottom:5px solid currentColor}
+        .zm-caret-down{border-top:5px solid currentColor}
+        .zm-sort[aria-sort="ascending"] .zm-caret-up,.zm-sort[aria-sort="descending"] .zm-caret-down{opacity:1}
         .zm-plots-table tbody th{font-weight:600;color:inherit}
         .zm-plots-table th:nth-child(3),.zm-plots-table td:nth-child(3){text-align:right}
         .zm-plots-table th:nth-child(4),.zm-plots-table td:nth-child(4){text-align:center}
