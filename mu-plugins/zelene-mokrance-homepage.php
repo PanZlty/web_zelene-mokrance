@@ -95,6 +95,7 @@ add_action( 'wp_enqueue_scripts', function () {
 @keyframes zm-active-breathe{0%,100%{transform:scale(1);box-shadow:0 0 0 4px rgba(159,199,74,.10),0 7px 18px rgba(45,75,15,.10)}50%{transform:scale(1.055);box-shadow:0 0 0 10px rgba(159,199,74,.20),0 12px 26px rgba(45,75,15,.16)}}
 @media(prefers-reduced-motion:reduce){.zm-home__steps>div.is-active b{animation:none!important}}
 @media(min-width:901px){.zm-home__steps>div:not(:last-child):after{left:calc(50% + 38px)!important;right:calc(-50% + 58px)!important}}
+.zm-home__hero{min-height:unset!important}
 ' );
 }, 30 );
 
