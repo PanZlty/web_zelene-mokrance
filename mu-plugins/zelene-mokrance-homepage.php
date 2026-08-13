@@ -63,7 +63,6 @@ add_shortcode( 'zm_homepage', function () {
 add_action( 'wp_enqueue_scripts', function () {
 	if ( ! is_front_page() ) return;
 	wp_add_inline_style( 'zm-homepage', '
-.zm-home__hero{background-image:url("https://www.zelenemokrance.sk/wp-content/uploads/2026/08/Dron-02s.webp")}
 .zm-home__quote{background-image:url("https://www.zelenemokrance.sk/wp-content/uploads/2026/08/DSC_2411.webp")}
 .zm-home__feature-icon{margin-top:18px;color:var(--green);box-shadow:0 8px 22px rgba(66,102,22,.12)}
 .zm-home__split li{position:relative;padding-left:28px}
