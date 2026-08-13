@@ -97,6 +97,7 @@ add_action( 'wp_enqueue_scripts', function () {
 @media(min-width:901px){.zm-home__steps>div:not(:last-child):after{left:calc(50% + 38px)!important;right:calc(-50% + 58px)!important}}
 .zm-home__hero{min-height:unset!important}
 .zm-home__hero-stats strong,.zm-home__hero-stats span{font-family:inherit!important;color:inherit!important}.zm-home__hero-stats strong{font-size:1em!important}.zm-home__hero-stats span{font-size:.55em!important}
+.zm-home__hero-stats .zm-home__hero-stat-label{display:block!important;padding:0!important;margin-top:7px!important}
 ' );
 }, 30 );
 
