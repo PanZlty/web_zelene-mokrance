@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Zelené Mokrance – ponuka pozemkov
  * Description: Dynamická tabuľka pozemkov napojená na ACF údaje synchronizované z Google Sheets.
- * Version: 1.0.0
+ * Version: 1.1.0
  */
 
 defined('ABSPATH') || exit;
@@ -35,6 +35,14 @@ function zm_render_ponuka_pozemkov($atts) {
     ?>
     <div class="zm-plots-table-wrap" role="region" aria-label="Ponuka pozemkov" tabindex="0">
         <table class="zm-plots-table">
+            <thead>
+                <tr>
+                    <th scope="col">Pozemok</th>
+                    <th scope="col"><button type="button" class="zm-sort" data-sort="area" aria-label="Zoradiť podľa rozlohy">Rozloha <span aria-hidden="true">↕</span></button></th>
+                    <th scope="col"><button type="button" class="zm-sort" data-sort="price" aria-label="Zoradiť podľa ceny">Cena <span aria-hidden="true">↕</span></button></th>
+                    <th scope="col"><button type="button" class="zm-sort" data-sort="status" aria-label="Zoradiť podľa dostupnosti">Dostupnosť <span aria-hidden="true">↕</span></button></th>
+                </tr>
+            </thead>
             <tbody>
                 <?php foreach ($posts as $post) :
                     $plot_id = (string) get_field('plot_id', $post->ID);
@@ -43,7 +51,10 @@ function zm_render_ponuka_pozemkov($atts) {
                     $status = (string) get_field('status', $post->ID);
                     $status = isset($labels[$status]) ? $status : 'available';
                     ?>
-                    <tr class="zm-plot-row zm-plot-row--<?php echo esc_attr($status); ?>">
+                    <tr class="zm-plot-row zm-plot-row--<?php echo esc_attr($status); ?>"
+                        data-area="<?php echo esc_attr($area !== null && $area !== '' ? (float) $area : PHP_INT_MAX); ?>"
+                        data-price="<?php echo esc_attr($price !== null && $price !== '' ? (float) $price : PHP_INT_MAX); ?>"
+                        data-status="<?php echo esc_attr(array_search($status, array('available', 'reserved', 'sold'), true)); ?>">
                         <th scope="row">Pozemok <?php echo esc_html($plot_id); ?></th>
                         <td><?php echo $area !== null && $area !== '' ? esc_html(number_format_i18n((float) $area, 0) . ' m²') : '—'; ?></td>
                         <td><?php
@@ -68,23 +79,43 @@ function zm_ponuka_pozemkov_styles() {
     ?>
     <style id="zm-ponuka-pozemkov-css">
         .zm-plots-table-wrap{width:100%;overflow-x:auto;border:0;border-radius:0;background:transparent;box-shadow:none}
-        .zm-plots-table{width:100%;min-width:680px;border-collapse:separate;border-spacing:0 8px;font-family:var(--zm-font-body,Dosis,sans-serif);color:var(--zm-color-ink,#222)}
-        .zm-plots-table th,.zm-plots-table td{padding:16px 18px;border:0;text-align:left;vertical-align:middle}
+        .zm-plots-table{width:100%;min-width:680px;border-collapse:collapse;font-family:var(--zm-font-body,Dosis,sans-serif);color:var(--zm-color-ink,#222);font-size:15px}
+        .zm-plots-table th,.zm-plots-table td{padding:15px 22px;border:0;text-align:left;vertical-align:middle}
+        .zm-plots-table thead th{padding-top:12px;padding-bottom:12px;background:#f6eee4;color:#161616;font-size:13px;font-weight:700}
+        .zm-sort{display:inline-flex;align-items:center;gap:8px;padding:0;border:0;background:transparent;color:inherit;font:inherit;font-weight:700;cursor:pointer}
+        .zm-sort span{font-size:13px;line-height:1;transition:transform .2s ease}
+        .zm-sort[aria-sort="ascending"] span{transform:rotate(0deg)}
+        .zm-sort[aria-sort="descending"] span{transform:rotate(180deg)}
         .zm-plots-table tbody th{font-weight:600;color:inherit}
         .zm-plots-table th:nth-child(3),.zm-plots-table td:nth-child(3){text-align:right}
         .zm-plots-table th:nth-child(4),.zm-plots-table td:nth-child(4){text-align:center}
-        .zm-plots-table tbody tr{background:#fff;box-shadow:none}
-        .zm-plots-table tbody tr> :first-child{border-radius:10px 0 0 10px}
-        .zm-plots-table tbody tr> :last-child{border-radius:0 10px 10px 0}
-        .zm-plots-table tbody tr:hover{filter:brightness(.98)}
-        .zm-plot-row--reserved>th,.zm-plot-row--reserved>td{background:#f6b84a;color:#4f3500}
-        .zm-plot-row--sold>th,.zm-plot-row--sold>td{background:#f7dddd;color:#752b2b}
-        .zm-plot-row--available>th,.zm-plot-row--available>td{background:#fff}
+        .zm-plots-table tbody tr:nth-child(odd)>th,.zm-plots-table tbody tr:nth-child(odd)>td{background:#faf3ea}
+        .zm-plots-table tbody tr:nth-child(even)>th,.zm-plots-table tbody tr:nth-child(even)>td{background:#e8e6e1}
+        .zm-plots-table tbody tr:hover>th,.zm-plots-table tbody tr:hover>td{background:#f0eadf}
+        .zm-plot-row--reserved{color:#7a5300}
+        .zm-plot-row--sold{color:#777}
+        .zm-plot-row--available{color:#171717}
         .zm-plot-status{display:block;width:100%;padding:0;background:transparent;border-radius:0;font-size:14px;font-weight:600;text-align:center}
         .zm-plot-status--available{color:var(--zm-color-header-green,#507d0c)}
         .zm-plot-status--reserved,.zm-plot-status--sold{color:inherit}
         @media(max-width:767px){.zm-plots-table th,.zm-plots-table td{padding:13px 14px}}
     </style>
+    <script id="zm-ponuka-pozemkov-sort-js">
+        document.addEventListener('click',function(event){
+            var button=event.target.closest('.zm-sort');
+            if(!button){return;}
+            var table=button.closest('.zm-plots-table');
+            var body=table.querySelector('tbody');
+            var key=button.dataset.sort;
+            var direction=button.getAttribute('aria-sort')==='ascending'?'descending':'ascending';
+            table.querySelectorAll('.zm-sort').forEach(function(item){item.removeAttribute('aria-sort');});
+            button.setAttribute('aria-sort',direction);
+            var multiplier=direction==='ascending'?1:-1;
+            Array.from(body.querySelectorAll('tr')).sort(function(a,b){
+                return (Number(a.dataset[key])-Number(b.dataset[key]))*multiplier;
+            }).forEach(function(row){body.appendChild(row);});
+        });
+    </script>
     <?php
 }
 add_action('wp_head', 'zm_ponuka_pozemkov_styles', 30);
