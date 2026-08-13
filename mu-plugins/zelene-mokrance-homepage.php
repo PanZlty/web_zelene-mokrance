@@ -90,8 +90,35 @@ add_action( 'wp_enqueue_scripts', function () {
 .zm-home__steps>div span{margin-top:20px;font-size:1rem;line-height:1.35}
 @media(max-width:900px){.zm-home__steps>div{text-align:left;padding:0}.zm-home__steps>div:not(:last-child):after{display:none!important}.zm-home__steps b{margin:0}.zm-home__steps>div span{margin-top:0}}
 @media(prefers-reduced-motion:reduce){.zm-home__steps>div b{animation:none}}
+.zm-home__steps>div b{animation:none!important;background-image:none!important;border:1px solid var(--green)!important;background-color:#fff!important;color:var(--green)!important;transform:none!important}
+.zm-home__steps>div.is-active b{border-width:2px!important;background-color:#eef5df!important;color:var(--green)!important;box-shadow:0 0 0 7px rgba(159,199,74,.16),0 7px 18px rgba(45,75,15,.1)!important}
+.zm-home__steps>div.is-checked b{border-width:1px!important;border-color:var(--green)!important;background-color:var(--green)!important;color:#fff!important;box-shadow:0 7px 18px rgba(45,75,15,.14)!important}
 ' );
 }, 30 );
+
+add_action( 'wp_enqueue_scripts', function () {
+	if ( ! is_front_page() ) return;
+	wp_register_script( 'zm-home-timeline', '', array(), ZM_HOME_VERSION, true );
+	wp_enqueue_script( 'zm-home-timeline' );
+	wp_add_inline_script( 'zm-home-timeline', '
+document.addEventListener("DOMContentLoaded",function(){
+  var steps=Array.from(document.querySelectorAll(".zm-home__steps>div"));
+  if(!steps.length)return;
+  steps.forEach(function(step,index){var badge=step.querySelector("b");if(badge){badge.dataset.number=String(index+1);badge.textContent=String(index+1);}});
+  var active=0;
+  function render(){
+    steps.forEach(function(step,index){
+      var badge=step.querySelector("b");
+      step.classList.toggle("is-checked",index<active);
+      step.classList.toggle("is-active",index===active);
+      if(badge)badge.textContent=index<active?"✓":badge.dataset.number;
+    });
+  }
+  render();
+  if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){setInterval(function(){active=active>=steps.length?0:active+1;render();},1200);}
+});
+' );
+}, 40 );
 
 add_action( 'wp_enqueue_scripts', function () {
 	if ( ! is_front_page() ) return;
