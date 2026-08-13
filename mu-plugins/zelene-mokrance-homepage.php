@@ -14,7 +14,18 @@ function zm_home_media_url( $attachment_id, $size = 'full' ) {
 	return $url ? $url : '';
 }
 
+/*
+ * The homepage is authored entirely with native Bricks elements on page 18048.
+ * The former shortcode renderer is intentionally disabled so no homepage copy
+ * can be rendered from this version-controlled plugin instead of Bricks.
+ */
 add_shortcode( 'zm_homepage', function () {
+	return '';
+
+	/* Legacy renderer retained below only as unreachable reference during the
+	 * migration. Remove it after the next content backup if no old page uses it.
+	 */
+	/*
 	$hero     = zm_home_media_url( 20532 ); // Dron-02s.
 	$location = zm_home_media_url( 20538 ); // DSC_3501.
 	$detail   = zm_home_media_url( 20537 ); // DSC_2411.
@@ -56,13 +67,8 @@ add_shortcode( 'zm_homepage', function () {
 		<section class="zm-home__cta"><div class="zm-home__wrap"><div><p class="zm-home__eyebrow">Nájdite svoje miesto</p><h2>Príďte sa pozrieť osobne</h2><p>Mapa parciel aj aktuálna dostupnosť sú online. Najlepší pocit z lokality však získate priamo na mieste.</p></div><div class="zm-home__actions"><a class="zm-home__button" href="/pozemky/">Ponuka pozemkov</a><a class="zm-home__button zm-home__button--light" href="/kontakt/">Chcem obhliadku</a></div></div></section>
 	</main>
 	<?php return ob_get_clean();
+\t*/
 } );
-
-// Native Bricks hero stats: transparent bottom gradient and readable scale.
-add_action( 'wp_enqueue_scripts', function () {
-	if ( ! is_front_page() ) return;
-	wp_add_inline_style( 'zm-homepage', '.zm-home__hero-stats{background:linear-gradient(180deg,rgba(20,38,12,0),rgba(20,38,12,.82));color:#fff;backdrop-filter:blur(2px);padding-top:22px}' );
-}, 50 );
 
 add_action( 'wp_enqueue_scripts', function () {
 	if ( ! is_front_page() ) return;
@@ -96,8 +102,6 @@ add_action( 'wp_enqueue_scripts', function () {
 @media(prefers-reduced-motion:reduce){.zm-home__steps>div.is-active b{animation:none!important}}
 @media(min-width:901px){.zm-home__steps>div:not(:last-child):after{left:calc(50% + 38px)!important;right:calc(-50% + 58px)!important}}
 .zm-home__hero{min-height:unset!important}
-.zm-home__hero-stats strong,.zm-home__hero-stats span{font-family:inherit!important;color:inherit!important}.zm-home__hero-stats strong{font-size:1em!important}.zm-home__hero-stats span{font-size:.55em!important}
-.zm-home__hero-stats .zm-home__hero-stat-label{display:block!important;padding:0!important;margin-top:7px!important}
 .zm-home__hero-stats>div>div{border:0!important}
 ' );
 }, 30 );
