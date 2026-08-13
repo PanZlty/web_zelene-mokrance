@@ -51,7 +51,7 @@ function zm_render_ponuka_pozemkov($atts) {
                     $status = (string) get_field('status', $post->ID);
                     $status = isset($labels[$status]) ? $status : 'available';
                     ?>
-                    <tr>
+                    <tr class="zm-plot-row zm-plot-row--<?php echo esc_attr($status); ?>">
                         <th scope="row">Pozemok <?php echo esc_html($plot_id); ?></th>
                         <td><?php echo $area !== null && $area !== '' ? esc_html(number_format_i18n((float) $area, 0) . ' m²') : '—'; ?></td>
                         <td><?php
@@ -76,18 +76,22 @@ function zm_ponuka_pozemkov_styles() {
     ?>
     <style id="zm-ponuka-pozemkov-css">
         .zm-plots-table-wrap{width:100%;overflow-x:auto;border:0;border-radius:14px;background:#fff;box-shadow:0 12px 34px rgba(34,34,34,.07)}
-        .zm-plots-table{width:100%;min-width:680px;border-collapse:collapse;font-family:var(--zm-font-body,Dosis,sans-serif);color:var(--zm-color-ink,#222)}
+        .zm-plots-table{width:100%;min-width:680px;border-collapse:separate;border-spacing:0 8px;font-family:var(--zm-font-body,Dosis,sans-serif);color:var(--zm-color-ink,#222)}
         .zm-plots-table th,.zm-plots-table td{padding:16px 18px;border:0;text-align:left;vertical-align:middle}
         .zm-plots-table thead th{background:var(--zm-color-header-green,#507d0c);color:#fff;font-size:16px;font-weight:600;letter-spacing:.02em}
-        .zm-plots-table tbody th{font-weight:600;color:var(--zm-color-header-green,#507d0c)}
+        .zm-plots-table tbody th{font-weight:600;color:inherit}
         .zm-plots-table th:nth-child(3),.zm-plots-table td:nth-child(3){text-align:right}
         .zm-plots-table th:nth-child(4),.zm-plots-table td:nth-child(4){text-align:center}
-        .zm-plots-table tbody tr:nth-child(even){background:#f8faf5}
-        .zm-plots-table tbody tr:hover{background:#f1f6e9}
-        .zm-plot-status{display:flex;width:100%;min-height:38px;align-items:center;justify-content:center;padding:8px 12px;border-radius:8px;font-size:14px;font-weight:600;text-align:center}
-        .zm-plot-status--available{background:#e5f3d1;color:#365c09}
-        .zm-plot-status--reserved{background:#fff0bf;color:#765700}
-        .zm-plot-status--sold{background:#f8d7d7;color:#8a2020}
+        .zm-plots-table tbody tr{background:#fff;box-shadow:0 4px 14px rgba(34,34,34,.05)}
+        .zm-plots-table tbody tr> :first-child{border-radius:10px 0 0 10px}
+        .zm-plots-table tbody tr> :last-child{border-radius:0 10px 10px 0}
+        .zm-plots-table tbody tr:hover{filter:brightness(.98)}
+        .zm-plot-row--reserved>th,.zm-plot-row--reserved>td{background:#f6b84a;color:#4f3500}
+        .zm-plot-row--sold>th,.zm-plot-row--sold>td{background:#e76f6f;color:#fff}
+        .zm-plot-row--available>th,.zm-plot-row--available>td{background:#fff}
+        .zm-plot-status{display:block;width:100%;padding:0;background:transparent;border-radius:0;font-size:14px;font-weight:600;text-align:center}
+        .zm-plot-status--available{color:var(--zm-color-header-green,#507d0c)}
+        .zm-plot-status--reserved,.zm-plot-status--sold{color:inherit}
         @media(max-width:767px){.zm-plots-table th,.zm-plots-table td{padding:13px 14px}}
     </style>
     <?php
