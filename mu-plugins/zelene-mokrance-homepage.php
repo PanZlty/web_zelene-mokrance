@@ -96,6 +96,7 @@ add_action( 'wp_enqueue_scripts', function () {
 @media(prefers-reduced-motion:reduce){.zm-home__steps>div.is-active b{animation:none!important}}
 @media(min-width:901px){.zm-home__steps>div:not(:last-child):after{left:calc(50% + 38px)!important;right:calc(-50% + 58px)!important}}
 .zm-home__hero{min-height:unset!important}
+.zm-home__hero-stats strong,.zm-home__hero-stats span{font-family:inherit!important;color:inherit!important}.zm-home__hero-stats strong{font-size:1em!important}.zm-home__hero-stats span{font-size:.55em!important}
 ' );
 }, 30 );
 
