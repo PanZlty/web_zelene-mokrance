@@ -75,11 +75,9 @@ add_shortcode('zm_pozemky_table', 'zm_render_ponuka_pozemkov');
 function zm_ponuka_pozemkov_styles() {
     ?>
     <style id="zm-ponuka-pozemkov-css">
-        .zm-plots-table-wrap{width:100%;overflow-x:auto;border:1px solid #dce5cf;border-radius:14px;background:#fff;box-shadow:0 12px 34px rgba(34,34,34,.07)}
+        .zm-plots-table-wrap{width:100%;overflow-x:auto;border:0;border-radius:14px;background:#fff;box-shadow:0 12px 34px rgba(34,34,34,.07)}
         .zm-plots-table{width:100%;min-width:680px;border-collapse:collapse;font-family:var(--zm-font-body,Dosis,sans-serif);color:var(--zm-color-ink,#222)}
-        .zm-plots-table th,.zm-plots-table td{padding:16px 18px;border-right:1px solid #e5eadf;border-bottom:1px solid #e5eadf;text-align:left;vertical-align:middle}
-        .zm-plots-table th:last-child,.zm-plots-table td:last-child{border-right:0}
-        .zm-plots-table tbody tr:last-child th,.zm-plots-table tbody tr:last-child td{border-bottom:0}
+        .zm-plots-table th,.zm-plots-table td{padding:16px 18px;border:0;text-align:left;vertical-align:middle}
         .zm-plots-table thead th{background:var(--zm-color-header-green,#507d0c);color:#fff;font-size:16px;font-weight:600;letter-spacing:.02em}
         .zm-plots-table tbody th{font-weight:600;color:var(--zm-color-header-green,#507d0c)}
         .zm-plots-table th:nth-child(3),.zm-plots-table td:nth-child(3){text-align:right}
