@@ -4,38 +4,38 @@
 
 - CPT key: `pozemok`
 - Verejný slug: `/pozemky/`
-- Počet inicializovaných záznamov: 55 (`Pozemok 1` až `Pozemok 55`)
-- Párovací kľúč: ACF `plot_id`, celé číslo 1–55
+- Počet inicializovaných záznamov: 55 (`Pozemok 01` až `Pozemok 55`)
+- Párovací kľúč: ACF `plot_id`, dvojmiestny textový kód `01`–`55`
 
 ## ACF polia
 
 | Pole | Typ | Význam |
 | --- | --- | --- |
-| `plot_id` | Number | Stabilné ID pozemku 1–55 |
-| `area_m2` | Number | Rozloha v m² |
+| `plot_id` | Text | Stabilný dvojmiestny kód pozemku `01`–`55` |
+| `area_m2` | Number | Rozloha v m²; synchronizovaná zo Sheets |
 | `price` | Number | Cena v eurách; synchronizovaná zo Sheets |
-| `status` | Select | `available`, `reserved`, `sold`; synchronizované zo Sheets |
+| `status` | Select | `available`, `reserved`, `sold`; synchronizovaný zo Sheets |
 
 ## Google Sheets
 
 Tabuľku publikujte ako CSV. Povinné hlavičky:
 
 ```csv
-plot_id,price,status
-1,75000,available
-2,82000,reserved
-3,91000,sold
+plot_id,price,area_m2,status
+01,75000,650,available
+02,82000,712,reserved
+03,91000,805,sold
 ```
 
-Voliteľná hlavička `area_m2` môže synchronizovať aj rozlohu. Ak chýba, rozloha sa spravuje ručne v ACF a cron ju nemení.
+Presná hlavička tabuľky:
 
-URL CSV sa nezapisuje napevno do repozitára. Nastaví sa v `wp-config.php` alebo v hostiteľskom prostredí:
-
-```php
-define('ZM_POZEMKY_GOOGLE_SHEET_CSV_URL', 'https://docs.google.com/spreadsheets/d/.../export?format=csv&gid=...');
+```csv
+plot_id,price,area_m2,status
 ```
 
-Cron beží každých 15 minút. Frontend vždy číta uložené ACF hodnoty, nie Google Sheets priamo.
+Google Sheets je zdroj pre cenu, rozlohu aj stav. Import zabezpečuje `WP All Import Pro + ACF Add-On`, rovnaký model ako pri Rezidencii Štúrova. Unique identifier importu je `{plot_id[1]}`. Import smie aktualizovať iba ACF polia `price`, `area_m2` a `status`; nesmie meniť názov, slug, obsah, obrázky ani Bricks dáta.
+
+Plánovanie importu sa nastaví vo WP All Import po vložení publikovanej Google Sheets CSV adresy. Frontend vždy číta uložené ACF hodnoty, nie Google Sheets priamo.
 
 Povolené statusy:
 
@@ -43,4 +43,4 @@ Povolené statusy:
 - `reserved` – Rezervovaný
 - `sold` – Predaný
 
-Slovenské hodnoty (`dostupný`, `rezervovaný`, `predaný`) synchronizácia normalizuje na interné anglické hodnoty.
+V Google Sheets sa používajú presne interné hodnoty `available`, `reserved`, `sold`, aby bol import jednoznačný.
