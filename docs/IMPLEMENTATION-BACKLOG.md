@@ -21,7 +21,7 @@
 - [ ] Pridat regulativy a povolene podlaznosti po potvrdeni podkladov.
 - [ ] Pridat proces kupy s casovym ramcom.
 - [ ] Pridat lokalitu, dostupnost a Google mapu.
-- [ ] Pridat CTA Mam zaujem o pozemok c. a Chcem obhliadku.
+- [x] Pridat CTA Rezervovat obhliadku do mapy a tabulky dostupnych pozemkov.
 
 ## P1 - formular
 

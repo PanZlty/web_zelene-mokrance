@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Zelené Mokrance – ponuka pozemkov
  * Description: Dynamická tabuľka pozemkov napojená na ACF údaje synchronizované z Google Sheets.
- * Version: 1.1.0
+ * Version: 1.2.0
  */
 
 defined('ABSPATH') || exit;
@@ -41,11 +41,12 @@ function zm_render_ponuka_pozemkov($atts) {
                     <th scope="col"><button type="button" class="zm-sort" data-sort="area" aria-label="Zoradiť podľa rozlohy">Rozloha <span class="zm-sort-carets" aria-hidden="true"><i class="zm-caret-up"></i><i class="zm-caret-down"></i></span></button></th>
                     <th scope="col"><button type="button" class="zm-sort" data-sort="price" aria-label="Zoradiť podľa ceny">Cena <span class="zm-sort-carets" aria-hidden="true"><i class="zm-caret-up"></i><i class="zm-caret-down"></i></span></button></th>
                     <th scope="col"><button type="button" class="zm-sort" data-sort="status" aria-label="Zoradiť podľa dostupnosti">Dostupnosť <span class="zm-sort-carets" aria-hidden="true"><i class="zm-caret-up"></i><i class="zm-caret-down"></i></span></button></th>
+                    <th scope="col">Obhliadka</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($posts as $post) :
-                    $plot_id = (string) get_field('plot_id', $post->ID);
+                    $plot_id = sprintf('%02d', absint(get_field('plot_id', $post->ID)));
                     $area = get_field('area_m2', $post->ID);
                     $price = get_field('price', $post->ID);
                     $status = (string) get_field('status', $post->ID);
@@ -66,6 +67,13 @@ function zm_render_ponuka_pozemkov($atts) {
                             }
                         ?></td>
                         <td><span class="zm-plot-status zm-plot-status--<?php echo esc_attr($status); ?>"><?php echo esc_html($labels[$status]); ?></span></td>
+                        <td class="zm-plot-viewing-cell">
+                            <?php if ($status === 'available') : ?>
+                                <button type="button" class="zm-plot-viewing-button" data-zm-reserve="<?php echo esc_attr($plot_id); ?>" aria-label="Rezervovať obhliadku pozemku <?php echo esc_attr($plot_id); ?>">Rezervovať obhliadku</button>
+                            <?php else : ?>
+                                <span aria-hidden="true">–</span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -80,7 +88,7 @@ function zm_ponuka_pozemkov_styles() {
     ?>
     <style id="zm-ponuka-pozemkov-css">
         .zm-plots-table-wrap{width:100%;overflow-x:auto;border:0;border-radius:0;background:transparent;box-shadow:none}
-        .zm-plots-table{width:100%;min-width:680px;border-collapse:separate;border-spacing:0 8px;font-family:var(--zm-font-body,Dosis,sans-serif);color:var(--zm-color-ink,#222);font-size:15px}
+        .zm-plots-table{width:100%;min-width:860px;border-collapse:separate;border-spacing:0 8px;font-family:var(--zm-font-body,Dosis,sans-serif);color:var(--zm-color-ink,#222);font-size:15px}
         .zm-plots-table th,.zm-plots-table td{padding:15px 22px;border:0;text-align:left;vertical-align:middle}
         .zm-plots-table thead th{padding-top:12px;padding-bottom:12px;background:#eef3e6;color:var(--zm-color-header-green,#507d0c);font-size:13px;font-weight:700}
         .zm-plots-table thead th:first-child{border-radius:8px 0 0 8px}
@@ -93,7 +101,7 @@ function zm_ponuka_pozemkov_styles() {
         .zm-sort[aria-sort="ascending"] .zm-caret-up,.zm-sort[aria-sort="descending"] .zm-caret-down{opacity:1}
         .zm-plots-table tbody th{font-weight:600;color:inherit}
         .zm-plots-table th:nth-child(3),.zm-plots-table td:nth-child(3){text-align:right}
-        .zm-plots-table th:nth-child(4),.zm-plots-table td:nth-child(4){text-align:center}
+        .zm-plots-table th:nth-child(4),.zm-plots-table td:nth-child(4),.zm-plots-table th:nth-child(5),.zm-plots-table td:nth-child(5){text-align:center}
         .zm-plots-table tbody tr> :first-child{border-radius:9px 0 0 9px}
         .zm-plots-table tbody tr> :last-child{border-radius:0 9px 9px 0}
         .zm-plot-row--available>th,.zm-plot-row--available>td{background:#fff;color:#171717}
@@ -103,6 +111,9 @@ function zm_ponuka_pozemkov_styles() {
         .zm-plot-status{display:block;width:100%;padding:0;background:transparent;border-radius:0;font-size:14px;font-weight:600;text-align:center}
         .zm-plot-status--available{color:var(--zm-color-header-green,#507d0c)}
         .zm-plot-status--reserved,.zm-plot-status--sold{color:inherit}
+        .zm-plot-viewing-button{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 16px;border:0;border-radius:999px;background:var(--zm-color-accent,#9fc74a);color:#22310c;font:inherit;font-size:14px;font-weight:800;line-height:1.15;text-align:center;cursor:pointer;transition:filter .2s ease,transform .2s ease}
+        .zm-plot-viewing-button:hover{filter:brightness(.95);transform:translateY(-1px)}
+        .zm-plot-viewing-button:focus-visible{outline:3px solid color-mix(in srgb,var(--zm-color-header-green,#507d0c) 45%,white);outline-offset:2px}
         @media(max-width:767px){.zm-plots-table th,.zm-plots-table td{padding:13px 14px}}
     </style>
     <script id="zm-ponuka-pozemkov-sort-js">

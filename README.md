@@ -9,6 +9,7 @@ Zdroj pravdy pre WordPress web https://www.zelenemokrance.sk/ a vlastny kod nasa
 - docs/CURRENT-SITE-TEXTS-2026-08-13.md
 - docs/CURRENT-SITE-TEXTS-2026-08-13.json
 - docs/POZEMKY-DATA-MODEL.md
+- docs/FORMULAR-OBHLIADKY.md
 - docs/IMPLEMENTATION-BACKLOG.md
 - mu-plugins/README.md
 
@@ -22,6 +23,6 @@ Zdroj pravdy pre WordPress web https://www.zelenemokrance.sk/ a vlastny kod nasa
 
 ## Deploy
 
-Automaticky deploy workflow pre MU-plugin este nie je aktivny. V repozitari sa momentalne nenachadza `.github/workflows/deploy-mu-plugins.yml`, preto push do `main` sam o sebe produkciu nemení.
+Automaticky deploy workflow pre MU-plugin je definovany v `.github/workflows/deploy-mu-plugins.yml`. Push zmeny v `mu-plugins/**` do vetvy `main` spusti kontrolu PHP syntaxe a nasledny SFTP upload.
 
-Pred zapnutim deployu treba potvrdit presny cielovy SFTP adresar u hostingu a nasledne nastavit GitHub Secrets: `SFTP_HOST`, `SFTP_PORT`, `SFTP_USERNAME`, `SFTP_PASSWORD`, `SFTP_TARGET`. Cesta sa neuklada do repozitara.
+Deploy vyzaduje nastavene GitHub Secrets: `SFTP_HOST`, `SFTP_PORT`, `SFTP_USERNAME`, `SFTP_PASSWORD`, `SFTP_TARGET`. Presna cielova cesta ani pristupove udaje sa neukladaju do repozitara.
