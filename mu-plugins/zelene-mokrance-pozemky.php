@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: ZelenĂ© Mokrance â€“ Pozemky
- * Description: CPT Pozemky, ACF polia a synchronizĂˇcia obchodnĂ˝ch Ăşdajov z Google Sheets CSV.
+ * Plugin Name: Zelené Mokrance – Pozemky
+ * Description: CPT Pozemky, ACF polia a synchronizácia obchodných údajov z Google Sheets CSV.
  * Version: 1.0.0
  */
 
@@ -16,13 +16,13 @@ add_action('init', function () {
         'labels' => array(
             'name' => 'Pozemky',
             'singular_name' => 'Pozemok',
-            'add_new_item' => 'PridaĹĄ pozemok',
-            'edit_item' => 'UpraviĹĄ pozemok',
-            'new_item' => 'NovĂ˝ pozemok',
-            'view_item' => 'ZobraziĹĄ pozemok',
-            'search_items' => 'HÄľadaĹĄ pozemky',
-            'not_found' => 'NenaĹˇli sa Ĺľiadne pozemky',
-            'all_items' => 'VĹˇetky pozemky',
+            'add_new_item' => 'Pridať pozemok',
+            'edit_item' => 'Upraviť pozemok',
+            'new_item' => 'Nový pozemok',
+            'view_item' => 'Zobraziť pozemok',
+            'search_items' => 'Hľadať pozemky',
+            'not_found' => 'Nenašli sa žiadne pozemky',
+            'all_items' => 'Všetky pozemky',
             'menu_name' => 'Pozemky',
         ),
         'public' => true,
@@ -42,7 +42,7 @@ add_action('acf/init', function () {
 
     acf_add_local_field_group(array(
         'key' => 'group_zm_pozemok_obchodne_udaje',
-        'title' => 'Ăšdaje pozemku',
+        'title' => 'Údaje pozemku',
         'fields' => array(
             array(
                 'key' => 'field_zm_plot_id',
@@ -63,7 +63,7 @@ add_action('acf/init', function () {
                 'required' => 0,
                 'min' => 0,
                 'step' => 0.01,
-                'append' => 'mÂ˛',
+                'append' => 'm²',
                 'wrapper' => array('width' => '25'),
             ),
             array(
@@ -74,7 +74,7 @@ add_action('acf/init', function () {
                 'required' => 0,
                 'min' => 0,
                 'step' => 0.01,
-                'append' => 'â‚¬',
+                'append' => '€',
                 'wrapper' => array('width' => '25'),
                 'instructions' => 'Synchronizuje sa z Google Sheets.',
             ),
@@ -85,9 +85,9 @@ add_action('acf/init', function () {
                 'type' => 'select',
                 'required' => 1,
                 'choices' => array(
-                    'available' => 'DostupnĂ˝',
-                    'reserved' => 'RezervovanĂ˝',
-                    'sold' => 'PredanĂ˝',
+                    'available' => 'Dostupný',
+                    'reserved' => 'Rezervovaný',
+                    'sold' => 'Predaný',
                 ),
                 'default_value' => 'available',
                 'return_format' => 'value',
@@ -183,8 +183,8 @@ function zm_pozemky_parse_decimal($value) {
 function zm_pozemky_sync_from_google_sheets() {
     $url = zm_pozemky_sheet_csv_url();
     if (!$url || strtolower((string) wp_parse_url($url, PHP_URL_SCHEME)) !== 'https') {
-        update_option('zm_pozemky_last_sync', array('time' => current_time('mysql'), 'success' => false, 'message' => 'Google Sheets CSV URL nie je nastavenĂˇ.'), false);
-        return new WP_Error('zm_missing_sheet_url', 'Google Sheets CSV URL nie je nastavenĂˇ.');
+        update_option('zm_pozemky_last_sync', array('time' => current_time('mysql'), 'success' => false, 'message' => 'Google Sheets CSV URL nie je nastavená.'), false);
+        return new WP_Error('zm_missing_sheet_url', 'Google Sheets CSV URL nie je nastavená.');
     }
 
     $response = wp_safe_remote_get($url, array('timeout' => 20, 'redirection' => 3));
@@ -192,7 +192,7 @@ function zm_pozemky_sync_from_google_sheets() {
         return $response;
     }
     if (wp_remote_retrieve_response_code($response) !== 200) {
-        return new WP_Error('zm_sheet_http_error', 'Google Sheets vrĂˇtil HTTP ' . wp_remote_retrieve_response_code($response) . '.');
+        return new WP_Error('zm_sheet_http_error', 'Google Sheets vrátil HTTP ' . wp_remote_retrieve_response_code($response) . '.');
     }
 
     $body = wp_remote_retrieve_body($response);
@@ -202,7 +202,7 @@ function zm_pozemky_sync_from_google_sheets() {
     $headers = fgetcsv($stream);
     if (!$headers) {
         fclose($stream);
-        return new WP_Error('zm_sheet_empty', 'CSV neobsahuje hlaviÄŤku.');
+        return new WP_Error('zm_sheet_empty', 'CSV neobsahuje hlavičku.');
     }
     $headers = array_map(function ($header) {
         return sanitize_key(trim((string) $header));
@@ -261,7 +261,7 @@ function zm_pozemky_sync_from_google_sheets() {
 add_action(ZM_POZEMKY_SYNC_HOOK, 'zm_pozemky_sync_from_google_sheets');
 
 add_filter('cron_schedules', function ($schedules) {
-    $schedules['zm_every_fifteen_minutes'] = array('interval' => 15 * MINUTE_IN_SECONDS, 'display' => 'KaĹľdĂ˝ch 15 minĂşt');
+    $schedules['zm_every_fifteen_minutes'] = array('interval' => 15 * MINUTE_IN_SECONDS, 'display' => 'Každých 15 minút');
     return $schedules;
 });
 
