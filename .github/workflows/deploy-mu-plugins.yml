@@ -50,6 +50,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y lftp
 
+      - name: Test SFTP connectivity (TCP)
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+        run: |
+          echo "Test TCP pripojenia na ${SFTP_HOST}:${SFTP_PORT}..."
+          if timeout 15 bash -c "exec 3<>/dev/tcp/${SFTP_HOST}/${SFTP_PORT}" 2>/dev/null; then
+            echo "TCP OK: port ${SFTP_PORT} na ${SFTP_HOST} je dostupny"
+          else
+            echo "::error::TCP zlyhalo na ${SFTP_HOST}:${SFTP_PORT} — firewall, zly host/port, alebo SFTP/SSH nie je na hostingu povoleny"
+            exit 1
+          fi
+
       - name: Upload MU plugins to WordPress via SFTP
         env:
           SFTP_HOST: ${{ secrets.SFTP_HOST }}
