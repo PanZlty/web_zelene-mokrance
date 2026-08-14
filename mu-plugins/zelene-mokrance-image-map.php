@@ -95,7 +95,17 @@ function zm_imp_submit_viewing() {
         wp_send_json_error(array('message' => 'Tento pozemok už nie je dostupný na rezerváciu obhliadky.'), 409);
     }
     $body = "Pozemok: {$code}\nMeno: {$name}\nE-mail: {$email}\nTelefón: {$phone}\n\n{$message}";
-    $sent = wp_mail('info@zelenemokrance.sk', "Obhliadka pozemku {$code}", $body, array('Reply-To: ' . $name . ' <' . $email . '>'));
+    $recipient = 'varga@inforeal.sk';
+    if (function_exists('get_field')) {
+        $broker_email = get_field('zm_broker_email', 'zm_contact_settings');
+        $site_email = get_field('zm_site_email', 'zm_contact_settings');
+        if (is_string($broker_email) && is_email($broker_email)) {
+            $recipient = $broker_email;
+        } elseif (is_string($site_email) && is_email($site_email)) {
+            $recipient = $site_email;
+        }
+    }
+    $sent = wp_mail($recipient, "Obhliadka pozemku {$code}", $body, array('Reply-To: ' . $name . ' <' . $email . '>'));
     if (!$sent) {
         wp_send_json_error(array('message' => 'Správu sa nepodarilo odoslať. Kontaktujte nás telefonicky.'), 500);
     }

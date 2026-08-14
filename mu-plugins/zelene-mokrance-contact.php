@@ -30,8 +30,8 @@ add_action( 'acf/init', function () {
 		'key'    => 'group_zm_contact_settings',
 		'title'  => 'Kontaktné údaje webu',
 		'fields' => array(
-			array( 'key' => 'field_zm_site_phone', 'label' => 'Telefón', 'name' => 'zm_site_phone', 'type' => 'text', 'default_value' => '0907 99 77 99' ),
-			array( 'key' => 'field_zm_site_email', 'label' => 'E-mail', 'name' => 'zm_site_email', 'type' => 'email', 'default_value' => 'info@zelenemokrance.sk' ),
+			array( 'key' => 'field_zm_site_phone', 'label' => 'Telefón', 'name' => 'zm_site_phone', 'type' => 'text', 'default_value' => '0915 362 165' ),
+			array( 'key' => 'field_zm_site_email', 'label' => 'E-mail', 'name' => 'zm_site_email', 'type' => 'email', 'default_value' => 'varga@inforeal.sk' ),
 			array( 'key' => 'field_zm_broker_name', 'label' => 'Meno makléra', 'name' => 'zm_broker_name', 'type' => 'text', 'default_value' => 'Roman Varga' ),
 			array( 'key' => 'field_zm_broker_company', 'label' => 'Realitná kancelária', 'name' => 'zm_broker_company', 'type' => 'text', 'default_value' => 'Inforeal' ),
 			array( 'key' => 'field_zm_broker_email', 'label' => 'E-mail makléra', 'name' => 'zm_broker_email', 'type' => 'email', 'default_value' => 'varga@inforeal.sk' ),
@@ -115,8 +115,8 @@ add_action( 'acf/init', function () {
 }, 40 );
 
 add_shortcode( 'zm_contact_page', function () {
-	$phone         = zm_contact_value( 'zm_site_phone', '0907 99 77 99' );
-	$email         = zm_contact_value( 'zm_site_email', 'info@zelenemokrance.sk' );
+	$phone         = zm_contact_value( 'zm_site_phone', '0915 362 165' );
+	$email         = zm_contact_value( 'zm_site_email', 'varga@inforeal.sk' );
 	$broker_name   = zm_contact_value( 'zm_broker_name', 'Roman Varga' );
 	$broker_co     = zm_contact_value( 'zm_broker_company', 'Inforeal' );
 	$broker_email  = zm_contact_value( 'zm_broker_email', 'varga@inforeal.sk' );
