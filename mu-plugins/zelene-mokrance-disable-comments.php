@@ -26,7 +26,8 @@ add_action( 'init', function () {
 	}
 }, 100 );
 
-// Feed komentárov: vrátiť 403.
+// Feed komentárov: nevypisovať link z <head> a na feed vrátiť 403.
+add_filter( 'feed_links_show_comments_feed', '__return_false' );
 add_action( 'do_feed_rss2_comments', 'zm_disable_comments_feed', 1 );
 add_action( 'do_feed_atom_comments', 'zm_disable_comments_feed', 1 );
 function zm_disable_comments_feed() {
