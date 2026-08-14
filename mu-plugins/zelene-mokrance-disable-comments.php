@@ -28,9 +28,18 @@ add_action( 'init', function () {
 
 // Feed komentárov: nevypisovať link z <head> a na feed vrátiť 403.
 add_filter( 'feed_links_show_comments_feed', '__return_false' );
-add_action( 'do_feed_rss2_comments', 'zm_disable_comments_feed', 1 );
-add_action( 'do_feed_atom_comments', 'zm_disable_comments_feed', 1 );
-function zm_disable_comments_feed() {
+add_action( 'do_feed_rss2_comments', 'zm_disable_comments_feed_die', 1 );
+add_action( 'do_feed_atom_comments', 'zm_disable_comments_feed_die', 1 );
+add_action( 'template_redirect', 'zm_disable_comments_feed_redirect' );
+function zm_disable_comments_feed_redirect() {
+	if ( is_feed() ) {
+		$feed = get_query_var( 'feed' );
+		if ( is_string( $feed ) && stripos( $feed, 'comments' ) !== false ) {
+			zm_disable_comments_feed_die();
+		}
+	}
+}
+function zm_disable_comments_feed_die() {
 	wp_die( 'Komentáre sú vypnuté.', 'Komentáre sú vypnuté', array( 'response' => 403 ) );
 }
 
