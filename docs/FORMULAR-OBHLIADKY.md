@@ -4,7 +4,7 @@ Aktualizované: 13. augusta 2026
 
 ## Ako formulár funguje
 
-Formulár obhliadky je implementovaný v MU-plugine `zelene-mokrance-image-map.php`. Nie je to formulár Bricks ani Contact Form 7.
+Formulár obhliadky je implementovaný v MU-plugine `zelene-mokrance-plot-map.php`. Nie je to formulár Bricks ani Contact Form 7.
 
 1. Tlačidlo `Rezervovať obhliadku` na mape alebo v tabuľke otvorí spoločné modálne okno.
 2. Formulár automaticky vloží ID vybraného pozemku.
