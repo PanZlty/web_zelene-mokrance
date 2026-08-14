@@ -6,6 +6,17 @@ Aktualizované: 13. augusta 2026
 
 Formulár obhliadky je implementovaný v MU-plugine `zelene-mokrance-plot-map.php`. Nie je to formulár Bricks ani Contact Form 7.
 
+## Ochrana proti spamu
+
+Formulár má niekoľko vrstiev ochrany:
+
+- **Cloudflare Turnstile** — widget v modáli, token sa overuje serverovo cez `siteverify`. Secret key sa číta z konštanty `ZM_TURNSTILE_SECRET` alebo z WP option `zm_turnstile_secret` (nie je v repozitári). Ak secret chýba, Turnstile sa preskočí a zostávajú ostatné vrstvy.
+- **Honeypot** — skryté pole `zm_website`; ak ho bot vyplní, žiadosť sa ticho ignoruje (vráti sa úspech, email sa neodošle).
+- **Časová pasca** — pole `zm_time`; odoslanie rýchlejšie ako 3 sekundy po otvorení modalu sa ticho ignoruje.
+- **IP rate-limit** — maximálne 5 žiadostí za 15 minút na IP (vráti 429).
+
+Kontaktný formulár na stránke Kontakt (Bricks form) má natívny honeypot aj Turnstile (kľúče v Bricks > Settings > API keys).
+
 1. Tlačidlo `Rezervovať obhliadku` na mape alebo v tabuľke otvorí spoločné modálne okno.
 2. Formulár automaticky vloží ID vybraného pozemku.
 3. Návštevník zadá meno, e-mail, telefón, správu a potvrdí GDPR súhlas.

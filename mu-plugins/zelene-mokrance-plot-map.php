@@ -82,6 +82,53 @@ add_action('wp_ajax_zm_plot_viewing', 'zm_imp_submit_viewing');
 add_action('wp_ajax_nopriv_zm_plot_viewing', 'zm_imp_submit_viewing');
 function zm_imp_submit_viewing() {
     check_ajax_referer('zm_plot_viewing', 'nonce');
+
+    // Honeypot: skryté pole vyplnené botom -> tichý úspech, email sa neodošle.
+    if (!empty($_POST['zm_website'])) {
+        wp_send_json_success(array('message' => 'Ďakujeme. Ozveme sa vám s návrhom termínu obhliadky.'));
+    }
+
+    // Časová pasca: formulár sa nesmie odoslať skôr ako 3 sekundy po otvorení.
+    if (empty($_POST['zm_time']) || (time() - (int) $_POST['zm_time']) < 3) {
+        wp_send_json_success(array('message' => 'Ďakujeme. Ozveme sa vám s návrhom termínu obhliadky.'));
+    }
+
+    // IP rate-limit: maximálne 5 žiadostí za 15 minút na jednu IP.
+    $remote_ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '0.0.0.0';
+    $rate_key  = 'zm_viewing_rate_' . md5($remote_ip);
+    $attempts  = (int) get_transient($rate_key);
+    if ($attempts >= 5) {
+        wp_send_json_error(array('message' => 'Príliš veľa žiadostí. Skúste to neskôr.'), 429);
+    }
+    set_transient($rate_key, $attempts + 1, 15 * MINUTE_IN_SECONDS);
+
+    // Cloudflare Turnstile: overiť token, ak je secret nastavený.
+    $turnstile_secret = defined('ZM_TURNSTILE_SECRET') ? ZM_TURNSTILE_SECRET : get_option('zm_turnstile_secret');
+    if (is_string($turnstile_secret) && $turnstile_secret !== '') {
+        $token = sanitize_text_field(wp_unslash($_POST['cf-turnstile-response'] ?? ''));
+        if ($token === '') {
+            wp_send_json_error(array('message' => 'Overenie proti botom zlyhalo. Skúste to znova.'), 403);
+        }
+
+        $verify = wp_remote_post('https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
+            'timeout' => 15,
+            'body'    => array(
+                'secret'   => $turnstile_secret,
+                'response' => $token,
+            ),
+        ));
+
+        $verified = false;
+        if (!is_wp_error($verify) && wp_remote_retrieve_response_code($verify) === 200) {
+            $data     = json_decode(wp_remote_retrieve_body($verify), true);
+            $verified = isset($data['success']) && $data['success'] === true;
+        }
+
+        if (!$verified) {
+            wp_send_json_error(array('message' => 'Overenie proti botom zlyhalo. Skúste to znova.'), 403);
+        }
+    }
+
     $code = sprintf('%02d', absint($_POST['plot'] ?? 0));
     $name = sanitize_text_field(wp_unslash($_POST['name'] ?? ''));
     $email = sanitize_email(wp_unslash($_POST['email'] ?? ''));
@@ -121,6 +168,7 @@ add_action('wp_footer', function () {
         return;
     }
     ?>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <div class="zm-viewing-modal" hidden aria-hidden="true">
       <div class="zm-viewing-modal__backdrop" data-zm-close></div>
       <section class="zm-viewing-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="zm-viewing-title">
@@ -128,7 +176,9 @@ add_action('wp_footer', function () {
         <p class="zm-viewing-modal__eyebrow">Osobná obhliadka</p>
         <h2 id="zm-viewing-title">Mám záujem o pozemok <span data-zm-plot-label></span></h2>
         <form class="zm-viewing-form">
-          <input type="hidden" name="action" value="zm_plot_viewing"><input type="hidden" name="nonce" value="<?php echo esc_attr(wp_create_nonce('zm_plot_viewing')); ?>"><input type="hidden" name="plot" value="">
+          <input type="hidden" name="action" value="zm_plot_viewing"><input type="hidden" name="nonce" value="<?php echo esc_attr(wp_create_nonce('zm_plot_viewing')); ?>"><input type="hidden" name="plot" value=""><input type="hidden" name="zm_time" value="">
+          <label class="zm-viewing-form__hp" aria-hidden="true"><input type="text" name="zm_website" tabindex="-1" autocomplete="off"></label>
+          <div class="zm-viewing-form__turnstile" data-turnstile-wrap></div>
           <label>Meno a priezvisko *<input name="name" autocomplete="name" required></label>
           <label>E-mail *<input type="email" name="email" autocomplete="email" required></label>
           <label>Telefón<input type="tel" name="phone" autocomplete="tel"></label>
@@ -142,7 +192,7 @@ add_action('wp_footer', function () {
     .zm-map-tooltip{--zm-status:#6a8d24;width:100%;max-width:100%;min-width:0;color:var(--zm-color-ink,#222);font-family:"Nunito Sans",sans-serif;container-type:inline-size}
     .zm-map-tooltip,.zm-map-tooltip *{box-sizing:border-box}.zm-map-tooltip--reserved{--zm-status:#c88416}.zm-map-tooltip--sold{--zm-status:#b86161}.zm-map-tooltip__top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}.zm-map-tooltip h3{margin:0;min-width:0;font-size:23px;line-height:1.2}.zm-map-tooltip__top span{flex:0 0 auto;padding:5px 9px;border-radius:999px;background:color-mix(in srgb,var(--zm-status) 14%,white);color:var(--zm-status);font-size:12px;font-weight:800;text-transform:uppercase}.zm-map-tooltip dl{margin:18px 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.zm-map-tooltip dl div{min-width:0;padding:12px;background:#f5f8f0;border-radius:9px}.zm-map-tooltip dt{font-size:12px;color:#66705d}.zm-map-tooltip dd{margin:3px 0 0;font-weight:800;overflow-wrap:anywhere}.zm-map-tooltip__cta,.zm-viewing-form button{width:100%;max-width:100%;min-height:44px;border:0;border-radius:999px;background:var(--zm-color-accent,#9fc74a);color:#22310c;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:10px 18px;line-height:1.2;text-align:center;white-space:normal}
     @container (max-width:280px){.zm-map-tooltip__top{align-items:flex-start;flex-direction:column}.zm-map-tooltip dl{grid-template-columns:1fr}.zm-map-tooltip__cta{border-radius:14px}}
-    .zm-viewing-modal[hidden]{display:none}.zm-viewing-modal{position:fixed;inset:0;z-index:10050;display:grid;place-items:center;padding:18px}.zm-viewing-modal__backdrop{position:absolute;inset:0;background:rgba(20,30,12,.72)}.zm-viewing-modal__dialog{position:relative;width:min(560px,100%);max-height:calc(100vh - 36px);overflow:auto;padding:34px;background:#fff;border-radius:18px}.zm-viewing-modal__close{position:absolute;right:16px;top:12px;border:0;background:none;font-size:30px;cursor:pointer}.zm-viewing-modal__eyebrow{margin:0 0 8px;color:var(--zm-color-header-green);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.1em}.zm-viewing-modal h2{margin:0 36px 22px 0;font-size:30px}.zm-viewing-form{display:grid;grid-template-columns:1fr 1fr;gap:14px}.zm-viewing-form label{display:grid;gap:6px;font-size:14px;font-weight:700}.zm-viewing-form label:nth-of-type(4),.zm-viewing-form__gdpr,.zm-viewing-form button,.zm-viewing-form__response{grid-column:1/-1}.zm-viewing-form input,.zm-viewing-form textarea{width:100%;padding:11px 13px;border:1px solid #ccd3c5;border-radius:8px;font:inherit}.zm-viewing-form__gdpr{display:flex!important;align-items:flex-start;font-weight:500!important}.zm-viewing-form__gdpr input{width:auto;margin-top:3px}.zm-viewing-form__response{margin:0;text-align:center}.zm-imp-status-available{fill:#9fc74a!important;stroke:#6f9228!important;fill-opacity:.28!important}.zm-imp-status-reserved{fill:#d89a35!important;stroke:#b97810!important;fill-opacity:.3!important}.zm-imp-status-sold{fill:#c98282!important;stroke:#ad5d5d!important;fill-opacity:.28!important}@media(max-width:600px){.zm-viewing-form{grid-template-columns:1fr}.zm-viewing-modal__dialog{padding:26px 20px}}
+    .zm-viewing-modal[hidden]{display:none}.zm-viewing-modal{position:fixed;inset:0;z-index:10050;display:grid;place-items:center;padding:18px}.zm-viewing-modal__backdrop{position:absolute;inset:0;background:rgba(20,30,12,.72)}.zm-viewing-modal__dialog{position:relative;width:min(560px,100%);max-height:calc(100vh - 36px);overflow:auto;padding:34px;background:#fff;border-radius:18px}.zm-viewing-modal__close{position:absolute;right:16px;top:12px;border:0;background:none;font-size:30px;cursor:pointer}.zm-viewing-modal__eyebrow{margin:0 0 8px;color:var(--zm-color-header-green);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.1em}.zm-viewing-modal h2{margin:0 36px 22px 0;font-size:30px}.zm-viewing-form{display:grid;grid-template-columns:1fr 1fr;gap:14px}.zm-viewing-form label{display:grid;gap:6px;font-size:14px;font-weight:700}.zm-viewing-form label:nth-of-type(4),.zm-viewing-form__gdpr,.zm-viewing-form button,.zm-viewing-form__response{grid-column:1/-1}.zm-viewing-form input,.zm-viewing-form textarea{width:100%;padding:11px 13px;border:1px solid #ccd3c5;border-radius:8px;font:inherit}.zm-viewing-form__gdpr{display:flex!important;align-items:flex-start;font-weight:500!important}.zm-viewing-form__gdpr input{width:auto;margin-top:3px}.zm-viewing-form__response{margin:0;text-align:center}.zm-viewing-form__hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}.zm-viewing-form__turnstile{grid-column:1/-1;min-height:65px}.zm-imp-status-available{fill:#9fc74a!important;stroke:#6f9228!important;fill-opacity:.28!important}.zm-imp-status-reserved{fill:#d89a35!important;stroke:#b97810!important;fill-opacity:.3!important}.zm-imp-status-sold{fill:#c98282!important;stroke:#ad5d5d!important;fill-opacity:.28!important}@media(max-width:600px){.zm-viewing-form{grid-template-columns:1fr}.zm-viewing-modal__dialog{padding:26px 20px}}
     </style>
     <script>
     window.ZM_IMP_PLOTS=<?php echo wp_json_encode($plots); ?>;
@@ -154,10 +204,10 @@ add_action('wp_footer', function () {
       function card(p){var a=document.createElement('article'),cta=p.status==='available'?'<button type="button" class="zm-map-tooltip__cta" data-zm-reserve="'+p.code+'">Rezervovať obhliadku</button>':'';a.className='zm-map-tooltip zm-map-tooltip--'+p.status;a.dataset.zmPlot=p.code;a.innerHTML='<div class="zm-map-tooltip__top"><h3>Pozemok '+p.code+'</h3><span>'+p.statusLabel+'</span></div><dl><div><dt>Rozloha</dt><dd>'+p.areaLabel+'</dd></div><div><dt>Cena</dt><dd>'+p.priceLabel+'</dd></div></dl>'+cta;return a;}
       var activeCode='';document.addEventListener('pointerover',function(e){var source=e.target.closest&&e.target.closest(selector),c=source?code(source):'';if(plots[c])activeCode=c;},true);
       function replaceTooltip(target){var wrap=target&&target.closest&&target.closest('.imp-tooltip');if(!wrap)return;var source=document.querySelector('[data-zm-plot].imp-object:hover,[data-zm-plot].imp-shape:hover')||document.querySelector('.imp-object:hover,.imp-shape:hover');var c=source?code(source):activeCode;if(!plots[c])return;var host=wrap.querySelector('.imp-tooltip-content,.imp-tooltip-plain-text')||wrap;if(host.querySelector('.zm-map-tooltip[data-zm-plot="'+c+'"]'))return;host.replaceChildren(card(plots[c]));}
-      var modal=document.querySelector('.zm-viewing-modal'),form=modal&&modal.querySelector('form');function open(c){var p=plots[c];if(!modal||!p||p.status!=='available')return;modal.hidden=false;modal.setAttribute('aria-hidden','false');modal.querySelector('[name="plot"]').value=c;modal.querySelector('[data-zm-plot-label]').textContent=c;modal.querySelector('[name="message"]').value='Dobrý deň, chcel/chcela by som si dohodnúť obhliadku pozemku č. '+c+'.';modal.querySelector('[name="name"]').focus();document.body.style.overflow='hidden';}
+      var modal=document.querySelector('.zm-viewing-modal'),form=modal&&modal.querySelector('form'),turnstileWrap=modal&&modal.querySelector('[data-turnstile-wrap]'),turnstileId=null;function ensureTurnstile(){if(window.turnstile&&turnstileWrap){if(turnstileId===null){turnstileId=window.turnstile.render(turnstileWrap,{sitekey:'0x4AAAAAAEPzRsTdQP71kDVn'});}else{window.turnstile.reset(turnstileId);}}}function open(c){var p=plots[c];if(!modal||!p||p.status!=='available')return;modal.hidden=false;modal.setAttribute('aria-hidden','false');modal.querySelector('[name="plot"]').value=c;modal.querySelector('[data-zm-plot-label]').textContent=c;modal.querySelector('[name="message"]').value='Dobrý deň, chcel/chcela by som si dohodnúť obhliadku pozemku č. '+c+'.';modal.querySelector('[name="zm_time"]').value=Math.floor(Date.now()/1000);modal.querySelector('[name="name"]').focus();ensureTurnstile();document.body.style.overflow='hidden';}
       document.addEventListener('click',function(e){var b=e.target.closest('[data-zm-reserve]');if(b){e.preventDefault();open(b.dataset.zmReserve);}if(e.target.closest('[data-zm-close]')){modal.hidden=true;modal.setAttribute('aria-hidden','true');document.body.style.overflow='';}});
       document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal&&!modal.hidden){modal.hidden=true;modal.setAttribute('aria-hidden','true');document.body.style.overflow='';}});
-      if(form)form.addEventListener('submit',function(e){e.preventDefault();var out=form.querySelector('.zm-viewing-form__response'),btn=form.querySelector('button[type="submit"]');btn.disabled=true;out.textContent='Odosielam…';fetch('<?php echo esc_url(admin_url('admin-ajax.php')); ?>',{method:'POST',body:new FormData(form),credentials:'same-origin'}).then(function(r){return r.json();}).then(function(r){out.textContent=r.data&&r.data.message?r.data.message:'Hotovo.';if(r.success)form.reset();}).catch(function(){out.textContent='Správu sa nepodarilo odoslať.';}).finally(function(){btn.disabled=false;});});
+      if(form)form.addEventListener('submit',function(e){e.preventDefault();var out=form.querySelector('.zm-viewing-form__response'),btn=form.querySelector('button[type="submit"]');btn.disabled=true;out.textContent='Odosielam…';fetch('<?php echo esc_url(admin_url('admin-ajax.php')); ?>',{method:'POST',body:new FormData(form),credentials:'same-origin'}).then(function(r){return r.json();}).then(function(r){out.textContent=r.data&&r.data.message?r.data.message:'Hotovo.';if(r.success)form.reset();if(turnstileId!==null&&window.turnstile){window.turnstile.reset(turnstileId);}}).catch(function(){out.textContent='Správu sa nepodarilo odoslať.';}).finally(function(){btn.disabled=false;});});
       new MutationObserver(function(ms){paint();ms.forEach(function(m){m.addedNodes.forEach(function(n){if(n.nodeType===1)replaceTooltip(n);});});}).observe(document.body,{childList:true,subtree:true});document.addEventListener('DOMContentLoaded',paint);window.addEventListener('load',paint);setTimeout(paint,800);
     })();
     </script>
