@@ -18,6 +18,7 @@ Stav: 2026-08-14 — po Bricks migrácii a prvých opravách (Domov→Lokalita, 
 - [x] Zvolit a zdokumentovat workflow. (Bricks native; AGENTS.md)
 - [x] Doplnit tabulku parciel: parcela, m2, cena, stav. (shortcode `[zm_pozemky_table]`)
 - [x] Doplnit interaktivnu mapu so stavmi volne, rezervovane, predane. (Image Map Pro + MU-plugin tooltipy)
+- [ ] Rozsah mapy 20–55. (rozhodnuté 2026-08-14: zatial 01–19, zvysok neskor)
 - [ ] Pridat cennik a situacny plan v PDF. (caka na podklady)
 - [x] Pridat siete a technicku pripravenost. (sekcia na /pozemky/)
 - [x] Pridat Co je v cene / standard pozemku. (sekcia na /pozemky/)

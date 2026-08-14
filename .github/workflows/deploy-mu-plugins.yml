@@ -25,6 +25,26 @@ jobs:
       - name: Validate PHP syntax
         run: find mu-plugins -type f -name '*.php' -print0 | xargs -0 -n1 php -l
 
+      - name: Validate SFTP secrets
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+          SFTP_USERNAME: ${{ secrets.SFTP_USERNAME }}
+          SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+          SFTP_TARGET: ${{ secrets.SFTP_TARGET }}
+        run: |
+          missing=()
+          for var in SFTP_HOST SFTP_PORT SFTP_USERNAME SFTP_PASSWORD SFTP_TARGET; do
+            val="${!var}"
+            if [ -z "$val" ]; then missing+=("$var"); fi
+          done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Chybajuce GitHub Secrets: ${missing[*]}"
+            echo "Nastav ich v GitHub > Settings > Secrets and variables > Actions a spusti deploy znovu."
+            exit 1
+          fi
+          echo "OK: SFTP_HOST=${SFTP_HOST} SFTP_PORT=${SFTP_PORT} SFTP_TARGET=${SFTP_TARGET}"
+
       - name: Install lftp
         run: |
           sudo apt-get update
@@ -38,6 +58,8 @@ jobs:
           SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
           SFTP_TARGET: ${{ secrets.SFTP_TARGET }}
         run: |
+          echo "Prihlasujem sa na sftp://${SFTP_HOST}:${SFTP_PORT}"
+          echo "Cielova cesta: ${SFTP_TARGET}"
           lftp -u "$SFTP_USERNAME","$SFTP_PASSWORD" -p "$SFTP_PORT" sftp://"$SFTP_HOST" <<EOF
           set sftp:auto-confirm yes
           set net:timeout 20

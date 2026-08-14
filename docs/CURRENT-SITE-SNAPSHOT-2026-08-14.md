@@ -54,7 +54,7 @@ Main Menu (id 61): **Lokalita, Pozemky, Galéria, Kontakt**. Položka Lokalita u
 - CPT `pozemok`, seed 55 záznamov (`Pozemok 01`–`Pozemok 55`)
 - ACF: `plot_id`, `area_m2`, `price`, `status` (available/reserved/sold)
 - Sync: Google Sheets CSV (cron 15 min + manuálna tools stránka)
-- Frontend tabuľka a mapa zobrazujú aktuálne 01–19 (rozhodnúť, či rozšíriť na 55)
+- Frontend tabuľka a mapa zobrazujú aktuálne 01–19; rozhodnuté (2026-08-14): zvyšok 20–55 doplníme neskôr
 
 ## Footer
 

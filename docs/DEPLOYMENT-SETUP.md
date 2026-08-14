@@ -22,4 +22,20 @@ SFTP_TARGET musí byť presná cesta na WordPress wp-content/mu-plugins pre zele
 5. Spustiť manuálny deploy na schválenom targete.
 6. Overiť frontend, logy a rollback postup.
 
+## Ako to opraviť (kontrolný zoznam)
+
+1. Otvoriť `Settings > Secrets and variables > Actions` v GitHub repozitári.
+2. Nastaviť/opraviť secrets:
+   - `SFTP_HOST` — hostiteľská doména/IP pre SFTP
+   - `SFTP_PORT` — port (typicky 22; ak hostiteľ používa iný, presne ten)
+   - `SFTP_USERNAME` — FTP/SFTP účet hostingu
+   - `SFTP_PASSWORD` — heslo účtu
+   - `SFTP_TARGET` — presná cesta k `wp-content/mu-plugins` (napr. `/domains/zelenemokrance.sk/www/wp-content/mu-plugins` — overiť u hostingu!)
+3. V `.github/workflows/deploy-mu-plugins.yml` je teraz krok **Validate SFTP secrets**, ktorý pri chýbajúcom secrete zlyhá s jasnou hláškou (ktorý secret chýba).
+4. Spustiť deploy: push do `main` alebo `workflow_dispatch`.
+5. Overiť frontend a logy; ak SFTP zlyhá aj s nastavenými secrets, overiť u hostingu, či:
+   - účet má oprávnenie písať do cieľovej cesty,
+   - hosting neblokuje pripojenie z GitHub runnerov (IP allowlist),
+   - cieľová cesta je správna.
+
 Do tohto dokumentu ani repozitára nepatria heslá ani application passwords.
