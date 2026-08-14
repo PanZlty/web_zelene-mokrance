@@ -24,4 +24,8 @@ The module is safe to roll back by removing the file from the deployed MU-plugin
 
 ## Deployment status
 
-The code is committed to GitHub. Production deployment remains blocked until `SFTP_TARGET` is verified with the hosting administrator. Do not deploy to an assumed path.
+The code is committed to GitHub. The GitHub Actions workflow runs on push to `main` (PHP syntax check passes), but the SFTP upload step fails: `SFTP_*` secrets or `SFTP_TARGET` need to be verified with the hosting administrator before production deploy works. Until then, changed MU-plugin files are also placed on the server manually and kept in sync with the repo.
+
+## Footer year module
+
+`zelene-mokrance-footer.php` registers the `zm_footer_year` action used by the Bricks dynamic tag `{do_action:zm_footer_year}` in the footer copyright text, so the year updates automatically.

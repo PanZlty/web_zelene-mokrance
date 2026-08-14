@@ -1,6 +1,6 @@
 # Deployment setup blocker
 
-GitHub Actions deploy workflow nebol vytvorený, pretože pred produkčným SFTP deployom treba potvrdiť presný remote target a rozsah súborov.
+Workflow `.github/workflows/deploy-mu-plugins.yml` existuje a spúšťa sa na push do `main`. Kontrola PHP syntaxe prechádza, ale krok „Upload MU plugins to WordPress via SFTP" **zlyháva**. Treba overiť a opraviť GitHub Secrets a presnú cieľovú cestu.
 
 ## Potrebné nastavenie
 
@@ -16,9 +16,9 @@ SFTP_TARGET musí byť presná cesta na WordPress wp-content/mu-plugins pre zele
 ## Bezpečný postup
 
 1. Potvrdiť host, port, účet a presnú cestu.
-2. V repozitári najprv vytvoriť a skontrolovať MU-plugin kód.
-3. Spustiť syntax check a review diffu.
-4. Pridať deploy workflow s uploadom iba mu-plugins/.
+2. Nastaviť/opraviť GitHub Secrets v repozitári.
+3. Udržiavať MU-plugin kód v repozitári ako zdroj pravdy.
+4. Spustiť syntax check a review diffu.
 5. Spustiť manuálny deploy na schválenom targete.
 6. Overiť frontend, logy a rollback postup.
 
