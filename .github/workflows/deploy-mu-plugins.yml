@@ -50,16 +50,25 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y lftp
 
-      - name: Test SFTP connectivity (TCP)
+      - name: Test SFTP/FTP connectivity (TCP)
         env:
           SFTP_HOST: ${{ secrets.SFTP_HOST }}
           SFTP_PORT: ${{ secrets.SFTP_PORT }}
         run: |
-          echo "Test TCP pripojenia na ${SFTP_HOST}:${SFTP_PORT}..."
+          IP=$(getent hosts "${SFTP_HOST}" | awk '{print $1}' | head -1)
+          echo "DNS: ${SFTP_HOST} -> ${IP}"
+          for port in 22 21 2222; do
+            if timeout 10 bash -c "exec 3<>/dev/tcp/${SFTP_HOST}/${port}" 2>/dev/null; then
+              echo "PORT ${port}: OTVORENY"
+            else
+              echo "PORT ${port}: nedostupny / odfiltrovany"
+            fi
+          done
+          echo "Nastaveny SFTP_PORT secret: ${SFTP_PORT}"
           if timeout 15 bash -c "exec 3<>/dev/tcp/${SFTP_HOST}/${SFTP_PORT}" 2>/dev/null; then
-            echo "TCP OK: port ${SFTP_PORT} na ${SFTP_HOST} je dostupny"
+            echo "OK: nastaveny port ${SFTP_PORT} je z runnera dostupny"
           else
-            echo "::error::TCP zlyhalo na ${SFTP_HOST}:${SFTP_PORT} — firewall, zly host/port, alebo SFTP/SSH nie je na hostingu povoleny"
+            echo "::error::Nastaveny port ${SFTP_PORT} nie je z GitHub runnera dostupny. Znamena to: hosting blokuje datacentrove IP (geo/firewall/fail2ban), zly host, alebo SFTP/SSH nie je povolene."
             exit 1
           fi
 
